@@ -1,0 +1,27 @@
+{
+  "name": "tr-discord",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node main.js",
+    "start:dev": "nodemon main.js",
+    "lint": "eslint app"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github:guidojw/tr-discord"
+  },
+  "keywords": [],
+  "author": "Guido de Jong",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "^11.5.1",
+    "dotenv": "^8.2.0"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.0.3",
+    "eslint": "^6.8.0",
+    "nodemon": "^2.0.2"
+  }
+}
