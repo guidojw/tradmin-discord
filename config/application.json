@@ -1,6 +1,6 @@
 {
   "prefix": "/",
   "restartDelay": 30,
-  "adminRoles": {},
-  "suggestionsBannedRole": {}
+  "adminRoles": ["Moderator", "Community Manager", "Bot Manager", "Management"],
+  "suggestionsBannedRole": "Suggestions Banned"
 }

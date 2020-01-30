@@ -1,6 +1,8 @@
 'use strict'
 const discord = require('discord.js')
 
+const config = require('../../config/application')
+
 function pluck(array) {
     return array.map(item => {
         return item['name']
@@ -54,5 +56,8 @@ exports.getChannel = (guild, name) => {
 }
 
 exports.isAdmin = member => {
-    return exports.hasRole(member, '')
+    for (const role of config.adminRoles) {
+        if (exports.hasRole(member, role)) return true
+    }
+    return false
 }
