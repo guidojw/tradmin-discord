@@ -1,7 +1,8 @@
 'use strict'
 class PermissionError extends Error {
-    constructor(...args) {
-        super(...args)
+    constructor(message) {
+        if (!message) message = 'You are not an admin!'
+        super(message)
     }
 }
 

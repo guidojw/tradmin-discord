@@ -1,23 +1,21 @@
 'use strict'
 require('dotenv').config()
 
-const discord = require('discord.js')
+const { Client, RichEmbed } = require('discord.js')
 const sleep = require('sleep')
 
 const discordService = require('../services/discord')
 
-const timeHelper = require('../helpers/time')
-
 const PermissionError = require('../errors/permission-error')
+const InputError = require('../errors/input-error')
 
 const commands = require('../commands')
 
 const config = require('../../config/application')
 
-const client = new discord.Client()
+const client = new Client()
 
 client.on('ready', async () => {
-    exports.startUnix = timeHelper.getUnix()
     console.log(`Ready to serve on ${client.guilds.size} servers, for ${client.users.size} users.`)
 })
 
@@ -49,26 +47,23 @@ client.on('message', async message => {
             } catch (err) {
                 console.error(err)
                 if (err instanceof PermissionError) {
-                    await req.channel.send('Insufficient powers!')
+                    await req.channel.send(err.message)
+                } else if (err instanceof InputError) {
+
                 } else {
-                    if (err.response.status === 500) {
-                        await req.channel.send('An error occurred!')
-                    } else {
-                        await req.channel.send(discordService.getEmbed(req.command, err.response.data.errors[0]
-                            .message))
-                    }
+                    await req.channel.send('An error occurred!')
                 }
             }
-            // await exports.log(req)
+            await exports.log(req)
             break
         }
     }
 })
 
 client.on('guildMemberAdd', async member => {
-    const embed = new discord.RichEmbed()
+    const embed = new RichEmbed()
         .setDescription(`Hey ${member.user.tag}, you're the **${member.guild.members.size}th** member on **${member
-            .guild.name}**🎉!`)
+            .guild.name}** 🎉 !`)
     member.guild.channels.find(channel => channel.name === 'welcome').send(embed)
 })
 
@@ -93,12 +88,18 @@ exports.restart = async client => {
     }
 }
 
-// exports.log = async req => {
-//     try {
-//         (await discordService.getChannel(req.guild, 'tradmin_logs')).send(discordService.getEmbed(`**${req
-//             .member.nickname ? req.member.nickname : req.author.username}** used command **${req.command}**!`, req
-//             .message.content))
-//     } catch (err) {
-//         console.error(err.message)
-//     }
-// }
+exports.setActivity = async (name, options)  => {
+    await client.user.setActivity(name, options)
+}
+
+exports.log = async req => {
+    try {
+        const embed = new RichEmbed()
+            .setAuthor(req.author.tag, req.author.displayAvatarURL)
+            .setDescription(`**Used** \`${req.command}\` **command in** ${req.message.channel} [Jump to Message](${req
+                .message.url})\n${req.message}`)
+        await discordService.getChannel(req.guild, 'moderator-logs').send(embed)
+    } catch (err) {
+        console.error(err.message)
+    }
+}
