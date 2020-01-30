@@ -4,15 +4,13 @@ require('dotenv').config()
 const discord = require('discord.js')
 const sleep = require('sleep')
 
-// const discordService = require('../services/discord')
+const discordService = require('../services/discord')
 
 const timeHelper = require('../helpers/time')
 
-// const InputError = require('../errors/input-error')
-// const ApplicationError = require('../errors/application-error')
-// const PermissionError = require('../errors/permission-error')
+const PermissionError = require('../errors/permission-error')
 
-// const commands = require('../commands')
+const commands = require('../commands')
 
 const config = require('../../config/application')
 
@@ -28,49 +26,44 @@ client.on('error', async err => {
     await exports.restart(client)
 })
 
-// client.on('message', async message => {
-//     if (message.author.bot) return
-//     if (!message.content.startsWith(config.prefix)) return
-//     let args = message.content.split(' ')
-//     const command = args[0].slice(1)
-//     args.shift()
-//     for (const [title, controller] of Object.entries(commands)) {
-//         if (controller[command]) {
-//             const req = {
-//                 guild: message.guild,
-//                 channel: message.channel,
-//                 member: message.member,
-//                 author: message.author,
-//                 message: message,
-//                 command: command,
-//                 args: args,
-//                 client: client
-//             }
-//             try {
-//                 if (title === 'admin' && !discordService.isAdmin(req.member)) throw new PermissionError()
-//                 await controller[command](req)
-//             } catch (err) {
-//                 console.error(err)
-//                 if (err instanceof InputError) {
-//                     await req.channel.send(err.message)
-//                 } else if (err instanceof ApplicationError) {
-//                     await req.channel.send(discordService.getEmbed(req.command, err.message))
-//                 } else if (err instanceof PermissionError) {
-//                     await req.channel.send('Insufficient powers!')
-//                 } else {
-//                     if (err.response.status === 500) {
-//                         await req.channel.send('An error occurred!')
-//                     } else {
-//                         await req.channel.send(discordService.getEmbed(req.command, err.response.data.errors[0]
-//                             .message))
-//                     }
-//                 }
-//             }
-//             await exports.log(req)
-//             break
-//         }
-//     }
-// })
+client.on('message', async message => {
+    if (message.author.bot) return
+    if (!message.content.startsWith(config.prefix)) return
+    let args = message.content.split(' ')
+    const command = args[0].slice(1)
+    args.shift()
+    for (const [title, controller] of Object.entries(commands)) {
+        if (controller[command]) {
+            const req = {
+                guild: message.guild,
+                channel: message.channel,
+                member: message.member,
+                author: message.author,
+                message: message,
+                command: command,
+                args: args
+            }
+            try {
+                if (title === 'admin' && !discordService.isAdmin(req.member)) throw new PermissionError()
+                await controller[command](req)
+            } catch (err) {
+                console.error(err)
+                if (err instanceof PermissionError) {
+                    await req.channel.send('Insufficient powers!')
+                } else {
+                    if (err.response.status === 500) {
+                        await req.channel.send('An error occurred!')
+                    } else {
+                        await req.channel.send(discordService.getEmbed(req.command, err.response.data.errors[0]
+                            .message))
+                    }
+                }
+            }
+            // await exports.log(req)
+            break
+        }
+    }
+})
 
 client.on('guildMemberAdd', async member => {
     const embed = new discord.RichEmbed()
