@@ -2,5 +2,6 @@
   "prefix": "/",
   "restartDelay": 30,
   "adminRoles": ["Moderator", "Community Manager", "Bot Manager", "Management"],
-  "suggestionsBannedRole": "Suggestions Banned"
+  "suggestionsBannedRole": "Suggestions Banned",
+  "suggestionsMessageId": "672860492162662426"
 }

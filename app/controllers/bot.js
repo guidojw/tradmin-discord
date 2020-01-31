@@ -96,8 +96,8 @@ exports.log = async req => {
     try {
         const embed = new RichEmbed()
             .setAuthor(req.author.tag, req.author.displayAvatarURL)
-            .setDescription(`**Used** \`${req.command}\` **command in** ${req.message.channel} [Jump to Message](${req
-                .message.url})\n${req.message}`)
+            .setDescription(`${req.author} **used** \`${req.command}\` **command in** ${req.message.channel} [Jump ` +
+                `to Message](${req.message.url})\n${req.message}`)
         await discordService.getChannel(req.guild, 'moderator-logs').send(embed)
     } catch (err) {
         console.error(err.message)
