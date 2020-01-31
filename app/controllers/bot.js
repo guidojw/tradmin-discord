@@ -64,8 +64,8 @@ client.on('message', async message => {
 
 client.on('guildMemberAdd', async member => {
     const embed = new RichEmbed()
-        .setDescription(`Hey ${member.user.tag}, you're the **${member.guild.memberCount}th** member on **${member
-            .guild.name}** 🎉 !`)
+        .setDescription(`You're the **${member.guild.memberCount}th** member on **${member.guild.name}** 🎉 !`)
+        .setAuthor(`Hey ${member.user.tag},`, member.user.displayAvatarURL)
     member.guild.channels.find(channel => channel.name === 'welcome').send(embed)
 })
 
