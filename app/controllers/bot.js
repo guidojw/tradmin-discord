@@ -70,7 +70,6 @@ client.on('guildMemberAdd', async member => {
 })
 
 client.on('messageReactionAdd', async (reaction, user) => {
-    console.log('added', reaction, user)
     if (reaction.message.id === config.suggestionsMessageId && reaction.emoji === reaction.message.guild.emojis.find(
         emoji => emoji.name === 'DogeThink')) {
         const member = reaction.message.guild.members.find(member => member.user === user)
@@ -79,7 +78,6 @@ client.on('messageReactionAdd', async (reaction, user) => {
 })
 
 client.on('messageReactionRemove', async (reaction, user) => {
-    console.log('removed', reaction, user)
     if (reaction.message.id === config.suggestionsMessageId && reaction.emoji === reaction.message.guild.emojis.find(
         emoji => emoji.name === 'DogeThink')) {
         const member = reaction.message.guild.members.find(member => member.user === user)
