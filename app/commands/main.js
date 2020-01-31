@@ -11,11 +11,8 @@ exports.suggest = async req => {
     if (discordService.hasRole(req.member, config.suggestionsBannedRole)) {
         throw new PermissionError('You are banned from using the suggest command!')
     }
-    const rolesChannel = req.guild.channels.find(channel => channel.name === 'roles')
-    const roleMessage = (await rolesChannel.fetchMessages()).find(message => message.id === config
-        .suggestionsMessageId)
-    const roleEmoji = req.guild.emojis.find(emoji => emoji.name === 'DogeThink')
-    if (!(await discordService.hasReacted(roleMessage, roleEmoji, req.author))) {
+    if (!discordService.hasRole(req.member, config.suggestionsRole)) {
+        const rolesChannel = req.guild.channels.find(channel => channel.name === 'roles')
         throw new PermissionError(`Please check ${rolesChannel} first!`)
     }
     if (req.args.length > 0) {

@@ -7,8 +7,8 @@ function pluck(array) {
     })
 }
 
-exports.hasRole = (member, role) => {
-    return pluck(member.roles).includes(role)
+exports.hasRole = (member, name) => {
+    return pluck(member.roles).includes(name)
 }
 
 exports.getChannel = (guild, name) => {
@@ -22,11 +22,12 @@ exports.isAdmin = member => {
     return false
 }
 
-exports.hasReacted = async (message, emoji, user) => {
-    for (const reaction of message.reactions.values()) {
-        if (reaction.emoji.id === emoji.id) {
-            return (await reaction.fetchUsers(reaction.count)).has(user.id)
-        }
-    }
-    return false
+exports.addRole = async (member, name) => {
+    const role = member.guild.roles.find(role => role.name === name)
+    if (role) await member.addRole(role)
+}
+
+exports.removeRole = async (member, name) => {
+    const role = member.roles.find(role => role.name === name)
+    if (role) await member.removeRole(role)
 }

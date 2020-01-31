@@ -16,6 +16,8 @@ const config = require('../../config/application')
 const client = new Client()
 
 client.on('ready', async () => {
+    await client.guilds.find(guild => guild.name === 'Twin-Rail').channels.find(channel => channel.name
+        === 'roles').fetchMessages()
     console.log(`Ready to serve on ${client.guilds.size} servers, for ${client.users.size} users.`)
 })
 
@@ -65,6 +67,24 @@ client.on('guildMemberAdd', async member => {
         .setDescription(`Hey ${member.user.tag}, you're the **${member.guild.members.size}th** member on **${member
             .guild.name}** 🎉 !`)
     member.guild.channels.find(channel => channel.name === 'welcome').send(embed)
+})
+
+client.on('messageReactionAdd', async (reaction, user) => {
+    console.log('added', reaction, user)
+    if (reaction.message.id === config.suggestionsMessageId && reaction.emoji === reaction.message.guild.emojis.find(
+        emoji => emoji.name === 'DogeThink')) {
+        const member = reaction.message.guild.members.find(member => member.user === user)
+        if (member) await discordService.addRole(member, config.suggestionsRole)
+    }
+})
+
+client.on('messageReactionRemove', async (reaction, user) => {
+    console.log('removed', reaction, user)
+    if (reaction.message.id === config.suggestionsMessageId && reaction.emoji === reaction.message.guild.emojis.find(
+        emoji => emoji.name === 'DogeThink')) {
+        const member = reaction.message.guild.members.find(member => member.user === user)
+        if (member) await discordService.removeRole(member, config.suggestionsRole)
+    }
 })
 
 exports.login = async () => {
