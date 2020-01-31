@@ -3,5 +3,5 @@
   "restartDelay": 30,
   "adminRoles": ["Moderator", "Community Manager", "Bot Manager", "Management"],
   "suggestionsBannedRole": "Suggestions Banned",
-  "suggestionsMessageId": "672860492162662426"
+  "suggestionsMessageId": "668534620278751233"
 }
