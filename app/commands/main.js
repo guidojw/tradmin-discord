@@ -27,6 +27,7 @@ exports.suggest = async req => {
     await message.react('✅')
     await message.react('🚫')
     await message.react(req.config.emojiIds.suggestionEmojiId)
+    req.channel.send('Successfully suggested', { embed: embed })
 }
 
 exports.delete = async req => {
