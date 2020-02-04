@@ -5,13 +5,11 @@ const discordService = require('../services/discord')
 
 const PermissionError = require('../errors/permission-error')
 
-const config = require('../../config/application')
-
 exports.suggest = async req => {
-    if (discordService.hasRole(req.member, config.suggestionsBannedRole)) {
+    if (discordService.hasRole(req.member, req.config.suggestionsBannedRole)) {
         throw new PermissionError('You are banned from using the suggest command!')
     }
-    if (!discordService.hasRole(req.member, config.suggestionsRole)) {
+    if (!discordService.hasRole(req.member, req.config.suggestionsRole)) {
         const rolesChannel = req.guild.channels.find(channel => channel.name === 'roles')
         throw new PermissionError(`Please check ${rolesChannel} first!`)
     }
@@ -27,7 +25,6 @@ exports.suggest = async req => {
         const message = await req.guild.channels.find(channel => channel.name === 'suggestions').send(embed)
         await message.react('✅')
         await message.react('🚫')
-        const rooWutEmoji = req.guild.emojis.find(emoji => emoji.name === 'rooWut')
-        if (rooWutEmoji) await message.react(rooWutEmoji.id)
+        await message.react(req.config.emojiIds.suggestionEmojiId)
     }
 }

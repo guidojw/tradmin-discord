@@ -1,22 +1,14 @@
 'use strict'
-const config = require('../../config/application')
-
-function pluck(array) {
-    return array.map(item => {
-        return item['name']
-    })
-}
-
 exports.hasRole = (member, name) => {
-    return pluck(member.roles).includes(name)
+    return member.roles.some(role => role.name === name)
 }
 
 exports.getChannel = (guild, name) => {
     return guild.channels.find(channel => channel.name === name)
 }
 
-exports.isAdmin = member => {
-    for (const role of config.adminRoles) {
+exports.isAdmin = (member, adminRoles) => {
+    for (const role of adminRoles) {
         if (exports.hasRole(member, role)) return true
     }
     return false

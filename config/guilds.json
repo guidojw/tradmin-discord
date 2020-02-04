@@ -1,0 +1,38 @@
+{
+  "672167178551689259": {
+    "name": "Guido's server",
+    "prefix": "/",
+    "adminRoles": [
+      "Moderator",
+      "Community Manager",
+      "Bot Manager",
+      "Management"
+    ],
+    "suggestionsBannedRole": "Suggestions Banned",
+    "suggestionsRole": "Suggestions",
+    "suggestionsMessageId": "672860492162662426",
+    "rolesChannelId": "672860451033317396",
+    "emojiIds": {
+      "roleEmojiId": "672874093720109098",
+      "suggestionEmojiId": "672861136080601088"
+    }
+  },
+  "465333078626140187": {
+    "name": "Twin-Rail",
+    "prefix": "/",
+    "adminRoles": [
+      "Moderator",
+      "Community Manager",
+      "Bot Manager",
+      "Management"
+    ],
+    "suggestionsBannedRole": "Suggestions Banned",
+    "suggestionsRole": "Suggestions",
+    "suggestionsMessageId": "668534620278751233",
+    "rolesChannelId": "668533003378491392",
+    "emojiIds": {
+      "roleEmojiId": "528625310850088970",
+      "suggestionEmojiId": "595543001158254606"
+    }
+  }
+}
