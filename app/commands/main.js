@@ -22,7 +22,8 @@ exports.suggest = async req => {
             const attachment = req.message.attachments.first()
             if (attachment.height) embed.setImage(attachment.url)
         }
-        const message = await req.guild.channels.find(channel => channel.name === 'suggestions').send(embed)
+        const message = await req.guild.channels.find(channel => channel.id === req.config.suggestionsChannelId)
+            .send(embed)
         await message.react('✅')
         await message.react('🚫')
         await message.react(req.config.emojiIds.suggestionEmojiId)

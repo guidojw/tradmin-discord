@@ -78,7 +78,8 @@ client.on('guildMemberAdd', async member => {
         .setTitle(`Hey ${member.user.tag},`)
         .setDescription(`You're the **${member.guild.memberCount}th** member on **${member.guild.name}** 🎉 !`)
         .setThumbnail(member.user.displayAvatarURL)
-    member.guild.channels.find(channel => channel.name === 'welcome').send(embed)
+    const config = guildConfigs[member.guild.id]
+    member.guild.channels.find(channel => channel.id === config.welcomeChannelId).send(embed)
 })
 
 client.on('messageReactionAdd', async (reaction, user) => {
@@ -128,7 +129,7 @@ exports.log = async req => {
             .setAuthor(req.author.tag, req.author.displayAvatarURL)
             .setDescription(`${req.author} **used** \`${req.command}\` **command in** ${req.message.channel} [Jump ` +
                 `to Message](${req.message.url})\n${req.message}`)
-        await discordService.getChannel(req.guild, 'moderator-logs').send(embed)
+        await req.guild.channels.find(channel => channel.id === req.config.moderatorLogsChannelId).send(embed)
     } catch (err) {
         console.error(err.message)
     }

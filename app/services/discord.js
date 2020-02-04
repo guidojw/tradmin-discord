@@ -3,10 +3,6 @@ exports.hasRole = (member, name) => {
     return member.roles.some(role => role.name === name)
 }
 
-exports.getChannel = (guild, name) => {
-    return guild.channels.find(channel => channel.name === name)
-}
-
 exports.isAdmin = (member, adminRoles) => {
     for (const role of adminRoles) {
         if (exports.hasRole(member, role)) return true
