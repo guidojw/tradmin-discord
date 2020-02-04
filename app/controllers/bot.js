@@ -110,10 +110,10 @@ exports.login = async () => {
 exports.restart = async client => {
     try {
         await client.destroy()
+        await sleep.sleep(applicationConfig.restartDelay)
         await exports.login()
     } catch (err) {
         console.error(err)
-        await sleep.sleep(applicationConfig.restartDelay)
         await exports.restart(client)
     }
 }
