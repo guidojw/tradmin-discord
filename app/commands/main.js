@@ -12,8 +12,7 @@ exports.suggest = async req => {
         throw new PermissionError('You are banned from using the suggest command.')
     }
     if (!discordService.hasRole(req.member, req.config.suggestionsRole)) {
-        const rolesChannel = req.guild.channels.find(channel => channel.id === req.config.rolesChannelId)
-        throw new PermissionError(`Please check ${rolesChannel} first.`)
+        throw new PermissionError(`Please check <#${req.config.rolesChannelId}> first.`)
     }
     const suggestion = req.args.join(' ')
     const embed = new RichEmbed()
@@ -35,8 +34,7 @@ exports.delete = async req => {
         throw new PermissionError('You are banned from using the delete command.')
     }
     if (!discordService.hasRole(req.member, req.config.suggestionsRole)) {
-        const rolesChannel = req.guild.channels.find(channel => channel.id === req.config.rolesChannelId)
-        throw new PermissionError(`Please check ${rolesChannel} first.`)
+        throw new PermissionError(`Please check <#${req.config.rolesChannelId}> first.`)
     }
     const channel = req.guild.channels.find(channel => channel.id === req.config.suggestionsChannelId)
     const messages = await channel.fetchMessages()

@@ -15,6 +15,10 @@
     "suggestionsChannelId": "672188464438968353",
     "moderatorLogsChannelId": "672188386752331806",
     "welcomeChannelId": "672183038951817226",
+    "bugReportsChannelId": "674088900490297346",
+    "gameScreenshotsChannelId": "674099593335537714",
+    "firstSuggestionMessageId": "672445012495171596",
+    "firstBugReportMessageId": "674093653727379460",
     "emojiIds": {
       "roleEmojiId": "672874093720109098",
       "suggestionEmojiId": "672861136080601088"
@@ -36,6 +40,10 @@
     "suggestionsChannelId": "673198440074706964",
     "moderatorLogsChannelId": "465337145394200576",
     "welcomeChannelId": "465365723615723530",
+    "bugReportsChannelId": "673197712149053465",
+    "gameScreenshotsChannelId": "465335598711046145",
+    "firstSuggestionMessageId": "673198887493697596",
+    "firstBugReportMessageId": "673197951035899943",
     "emojiIds": {
       "roleEmojiId": "528625310850088970",
       "suggestionEmojiId": "595543001158254606"

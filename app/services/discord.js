@@ -39,3 +39,7 @@ exports.prompt = (channel, author, ...options) => {
         message.delete()
     })
 }
+
+exports.getIdFromArgument = argument => {
+    return argument.slice(2, -1)
+}
