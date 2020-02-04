@@ -1,6 +1,5 @@
 {
   "672167178551689259": {
-    "name": "Guido's server",
     "prefix": "/",
     "adminRoles": [
       "Moderator",
@@ -17,7 +16,7 @@
     "welcomeChannelId": "672183038951817226",
     "bugReportsChannelId": "674088900490297346",
     "gameScreenshotsChannelId": "674099593335537714",
-    "firstSuggestionMessageId": "672445012495171596",
+    "firstSuggestionMessageId": "674253913662160899",
     "firstBugReportMessageId": "674093653727379460",
     "emojiIds": {
       "roleEmojiId": "672874093720109098",
@@ -25,7 +24,6 @@
     }
   },
   "465333078626140187": {
-    "name": "Twin-Rail",
     "prefix": "/",
     "adminRoles": [
       "Moderator",

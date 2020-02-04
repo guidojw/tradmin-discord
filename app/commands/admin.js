@@ -27,12 +27,20 @@ exports.clear = async req => {
     const bugReportsChannelId = req.config.bugReportsChannelId
     if (id !== suggestionsChannelId && id !== bugReportsChannelId) throw new InputError('Can only clear <#' +
         `${suggestionsChannelId}> or <#${bugReportsChannelId}>.`)
-    const channel = req.guild.channels.find(channel => channel.id === id)
-    let messages
-    do {
-        messages = (await channel.fetchMessages()).filter(message => message.id !== req.config
-            .firstSuggestionMessageId && message.id !== req.config.firstBugReportMessageId)
-        if (messages.size > 0) await channel.bulkDelete(messages.size)
-    } while (messages.size > 0)
-    req.channel.send(`Successfully cleared <#${id}>.`)
+    const choice = await discordService.prompt(req.channel, req.author, 'Are you sure you would like to ' +
+        `clear <#${id}>?`)
+    if (choice) {
+        const channel = req.guild.channels.find(channel => channel.id === id)
+        let messages
+        do {
+            messages = (await channel.fetchMessages({ after: id === suggestionsChannelId ? req.config
+                    .firstSuggestionMessageId : req.config.firstBugReportMessageId }))
+            if (messages.size > 0) await channel.bulkDelete(messages.size)
+        } while (messages.size > 0)
+        req.channel.send(`Successfully cleared <#${id}>.`)
+    } else {
+        req.channel.send(`Didn't clear <#${id}>.`)
+    }
+
+
 }
