@@ -40,8 +40,8 @@ exports.delete = async req => {
     const channel = req.guild.channels.find(channel => channel.id === req.config.suggestionsChannelId)
     const messages = await channel.fetchMessages()
     for (const suggestion of messages.values()) {
-        if (suggestion.embeds.length === 1 && suggestion.embeds[0].author.url === req.author.url && suggestion.id !==
-            req.config.suggestionsMessageId) {
+        if (suggestion.embeds.length === 1 && suggestion.embeds[0].author.name.indexOf(req.author.tag) !== -1 &&
+            suggestion.id !== req.config.suggestionsMessageId) {
             const choice = await discordService.prompt(req.channel, req.author, 'Are you sure you would like' +
                 ' to delete this suggestion?', { embed: suggestion.embeds[0]})
             if (choice) {
