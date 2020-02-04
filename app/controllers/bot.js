@@ -62,7 +62,7 @@ client.on('message', async message => {
                 if (err instanceof PermissionError) {
                     await req.channel.send(err.message)
                 } else if (err instanceof InputError) {
-
+                    await req.channel.send(err.message)
                 } else {
                     await req.channel.send('An error occurred!')
                 }
