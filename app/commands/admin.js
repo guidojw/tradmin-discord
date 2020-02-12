@@ -35,12 +35,18 @@ exports.clear = async req => {
         do {
             messages = (await channel.fetchMessages({ after: id === suggestionsChannelId ? req.config
                     .firstSuggestionMessageId : req.config.firstBugReportMessageId }))
-            if (messages.size > 0) await channel.bulkDelete(messages.size)
+            if (messages.size > 0) {
+                try {
+                    await channel.bulkDelete(messages.size)
+                } catch (err) {
+                    for (const message of messages.values()) {
+                        await message.delete()
+                    }
+                }
+            }
         } while (messages.size > 0)
         req.channel.send(`Successfully cleared <#${id}>.`)
     } else {
         req.channel.send(`Didn't clear <#${id}>.`)
     }
-
-
 }
