@@ -7,27 +7,28 @@ const PermissionError = require('../errors/permission-error')
 const InputError = require('../errors/input-error')
 
 exports.suggest = async req => {
-    if (req.args.length === 0) throw new InputError()
-    if (discordService.hasRole(req.member, req.config.suggestionsBannedRole)) {
-        throw new PermissionError('You are banned from using the suggest command.')
-    }
-    if (!discordService.hasRole(req.member, req.config.suggestionsRole)) {
-        throw new PermissionError(`Please check <#${req.config.rolesChannelId}> first.`)
-    }
-    const suggestion = req.args.join(' ')
-    const embed = new RichEmbed()
-        .setDescription(suggestion)
-        .setAuthor(`By: ${req.author.tag}`, req.author.displayAvatarURL, req.author.url)
-    if (req.message.attachments.size > 0) {
-        const attachment = req.message.attachments.first()
-        if (attachment.height) embed.setImage(attachment.url)
-    }
-    const message = await req.guild.channels.find(channel => channel.id === req.config.suggestionsChannelId)
-        .send(embed)
-    await message.react('✅')
-    await message.react('🚫')
-    await message.react(req.config.emojiIds.suggestionEmojiId)
-    req.channel.send('Successfully suggested', { embed: embed })
+    await req.channel.send('Suggestions are currently closed!')
+    // if (req.args.length === 0) throw new InputError()
+    // if (discordService.hasRole(req.member, req.config.suggestionsBannedRole)) {
+    //     throw new PermissionError('You are banned from using the suggest command.')
+    // }
+    // if (!discordService.hasRole(req.member, req.config.suggestionsRole)) {
+    //     throw new PermissionError(`Please check <#${req.config.rolesChannelId}> first.`)
+    // }
+    // const suggestion = req.args.join(' ')
+    // const embed = new RichEmbed()
+    //     .setDescription(suggestion)
+    //     .setAuthor(`By: ${req.author.tag}`, req.author.displayAvatarURL, req.author.url)
+    // if (req.message.attachments.size > 0) {
+    //     const attachment = req.message.attachments.first()
+    //     if (attachment.height) embed.setImage(attachment.url)
+    // }
+    // const message = await req.guild.channels.find(channel => channel.id === req.config.suggestionsChannelId)
+    //     .send(embed)
+    // await message.react('✅')
+    // await message.react('🚫')
+    // await message.react(req.config.emojiIds.suggestionEmojiId)
+    // req.channel.send('Successfully suggested', { embed: embed })
 }
 
 exports.delete = async req => {
