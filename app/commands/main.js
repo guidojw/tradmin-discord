@@ -7,18 +7,19 @@ const PermissionError = require('../errors/permission-error')
 const InputError = require('../errors/input-error')
 
 exports.suggest = async req => {
+    if (req.args.length === 0) throw new InputError()
+    if (discordService.hasRole(req.member, req.config.suggestionsBannedRole)) {
+        throw new PermissionError('You are banned from using the suggest command.')
+    }
     await req.channel.send('Suggestions are currently closed!')
-    // if (req.args.length === 0) throw new InputError()
-    // if (discordService.hasRole(req.member, req.config.suggestionsBannedRole)) {
-    //     throw new PermissionError('You are banned from using the suggest command.')
-    // }
     // if (!discordService.hasRole(req.member, req.config.suggestionsRole)) {
     //     throw new PermissionError(`Please check <#${req.config.rolesChannelId}> first.`)
     // }
     // const suggestion = req.args.join(' ')
+    // const authorUrl = `https://discordapp.com/users/${req.author.id}`
     // const embed = new RichEmbed()
     //     .setDescription(suggestion)
-    //     .setAuthor(`By: ${req.author.tag}`, req.author.displayAvatarURL, req.author.url)
+    //     .setAuthor(req.author.tag, req.author.displayAvatarURL, authorUrl)
     // if (req.message.attachments.size > 0) {
     //     const attachment = req.message.attachments.first()
     //     if (attachment.height) embed.setImage(attachment.url)
@@ -40,9 +41,10 @@ exports.delete = async req => {
     }
     const channel = req.guild.channels.find(channel => channel.id === req.config.suggestionsChannelId)
     const messages = await channel.fetchMessages()
+    const authorUrl = `https://discordapp.com/users/${req.author.id}`
     for (const suggestion of messages.values()) {
-        if (suggestion.embeds.length === 1 && suggestion.embeds[0].author.name.indexOf(req.author.tag) !== -1 &&
-            suggestion.id !== req.config.suggestionsMessageId) {
+        if (suggestion.embeds.length === 1 && suggestion.embeds[0].author.url === authorUrl && suggestion.id !== req
+            .config.suggestionsMessageId) {
             const choice = await discordService.prompt(req.channel, req.author, 'Are you sure you would like' +
                 ' to delete this suggestion?', { embed: suggestion.embeds[0]})
             if (choice) {
