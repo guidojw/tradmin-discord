@@ -3,6 +3,7 @@ require('dotenv').config()
 
 const { Client, RichEmbed } = require('discord.js')
 const sleep = require('sleep')
+const Sentry = require('@sentry/node')
 
 const discordService = require('../services/discord')
 
@@ -16,7 +17,9 @@ const guildConfigs = require('../../config/guilds')
 
 const client = new Client()
 
-client.on('ready', async () => {
+Sentry.init({ dsn: process.env.SENTRY_DSN })
+
+client.once('ready', async () => {
     for (const [guildId, config] of Object.entries(guildConfigs)) {
         const guild = client.guilds.find(guild => guild.id === guildId)
         if (guild) {
@@ -64,6 +67,7 @@ client.on('message', async message => {
                 } else if (err instanceof InputError) {
                     if (err.message) await req.channel.send(err.message)
                 } else {
+                    Sentry.captureException(err)
                     await req.channel.send('An error occurred!')
                 }
             }
