@@ -1,0 +1,29 @@
+{
+  "adminRoles": [
+    "Moderator",
+    "Community Manager",
+    "Bot Manager",
+    "Management"
+  ],
+  "roles": {
+    "suggestionsBannedRole": "672488904859058179",
+    "suggestionsRole": "672906753477836819"
+  },
+  "messages": {
+    "suggestionsMessage": "672860492162662426",
+    "firstSuggestionMessage": "674253913662160899",
+    "firstBugReportMessage": "674093653727379460"
+  },
+  "channels": {
+    "rolesChannel": "672860451033317396",
+    "suggestionsChannel": "672188464438968353",
+    "logsChannel": "672188386752331806",
+    "welcomeChannel": "672183038951817226",
+    "bugReportsChannel": "674088900490297346",
+    "gameScreenshotsChannel": "674099593335537714"
+  },
+  "emojis": {
+    "roleEmoji": "672874093720109098",
+    "suggestionEmoji": "672861136080601088"
+  }
+}
