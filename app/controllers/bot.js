@@ -1,140 +1,113 @@
 'use strict'
 require('dotenv').config()
 
-const { Client, RichEmbed } = require('discord.js')
-const sleep = require('sleep')
-const Sentry = require('@sentry/node')
-
-const discordService = require('../services/discord')
-
-const PermissionError = require('../errors/permission-error')
-const InputError = require('../errors/input-error')
-
-const commands = require('../commands')
+const path = require('path')
+const Guild = require('./guild')
+const Commando = require('discord.js-commando')
+const { RichEmbed } = require('discord.js')
+const SettingProvider = require('./settingProvider')
 
 const applicationConfig = require('../../config/application')
-const guildConfigs = require('../../config/guilds')
 
-const client = new Client()
+module.exports = class Bot {
+    constructor() {
+        this.client = new Commando.Client({
+            commandPrefix: applicationConfig.defaultPrefix,
+            owner: applicationConfig.owner,
+            unknownCommandResponse: false,
+            disableEveryone: true
+        })
+        this.client.bot = this
+        this.client.setProvider(new SettingProvider())
 
-Sentry.init({ dsn: process.env.SENTRY_DSN })
+        this.client.registry
+            .registerGroup('admin', 'Admin')
+            .registerGroup('main', 'Main')
+            .registerDefaultGroups()
+            .registerDefaultTypes()
+            .registerDefaultCommands({
+                commandState: false,
+                unknownCommand: false,
+                ping: true,
+                help: true,
+                eval: true,
+                prefix: true
+            })
+            // .registerCommandsIn(path.join(__dirname, '../commands'))
 
-client.once('ready', async () => {
-    for (const [guildId, config] of Object.entries(guildConfigs)) {
-        const guild = client.guilds.find(guild => guild.id === guildId)
-        if (guild) {
-            const channel = guild.channels.find(channel => channel.id === config.rolesChannelId)
-            await channel.fetchMessages()
+        this.guilds = {}
+
+        this.client.once('ready', this.ready.bind(this))
+        this.client.on('guildMemberAdd', this.guildMemberAdd.bind(this))
+        this.client.on('messageReactionAdd', this.messageReactionAdd.bind(this))
+        this.client.on('messageReactionRemove', this.messageReactionRemove.bind(this))
+        this.client.on('commandRun', this.commandRun.bind(this))
+
+        this.client.login(process.env.DISCORD_TOKEN)
+    }
+
+    fetchData = () => {
+        for (const guild of this.client.guilds.values()) {
+            this.getGuild(guild.id)
         }
     }
-    console.log(`Ready to serve on ${client.guilds.size} servers, for ${client.users.size} users.`)
-})
 
-client.on('error', async err => {
-    console.error(err)
-    await exports.restart(client)
-})
-
-client.on('message', async message => {
-    if (message.author.bot) return
-    const config = guildConfigs[message.guild.id]
-    if (!config) return
-    if (!message.content.startsWith(config.prefix)) return
-    let args = message.content.split(' ')
-    const command = args[0].slice(1)
-    args.shift()
-    for (const [title, controller] of Object.entries(commands)) {
-        if (controller[command]) {
-            const req = {
-                guild: message.guild,
-                channel: message.channel,
-                member: message.member,
-                author: message.author,
-                message: message,
-                command: command,
-                args: args,
-                config: config
-            }
-            try {
-                if (title === 'admin' && !discordService.isAdmin(req.member, config.adminRoles)) {
-                    throw new PermissionError()
-                }
-                await controller[command](req)
-            } catch (err) {
-                console.error(err)
-                if (err instanceof PermissionError) {
-                    await req.channel.send(err.message)
-                } else if (err instanceof InputError) {
-                    if (err.message) await req.channel.send(err.message)
-                } else {
-                    Sentry.captureException(err)
-                    await req.channel.send('An error occurred!')
-                }
-            }
-            await exports.log(req)
-            break
+    getGuild = async guildId => {
+        if (!this.guilds[guildId]) {
+            const guild = new Guild(this, guildId)
+            await guild.loadData()
+            await guild.fetchData()
+            this.guilds[guildId] = guild
         }
+        return this.guilds[guildId]
     }
-})
 
-client.on('guildMemberAdd', async member => {
-    const embed = new RichEmbed()
-        .setTitle(`Hey ${member.user.tag},`)
-        .setDescription(`You're the **${member.guild.memberCount}th** member on **${member.guild.name}** 🎉 !`)
-        .setThumbnail(member.user.displayAvatarURL)
-    const config = guildConfigs[member.guild.id]
-    member.guild.channels.find(channel => channel.id === config.welcomeChannelId).send(embed)
-})
-
-client.on('messageReactionAdd', async (reaction, user) => {
-    const config = guildConfigs[reaction.message.guild.id]
-    if (reaction.message.id === config.suggestionsMessageId && reaction.emoji.id === config.emojiIds.roleEmojiId) {
-        const member = reaction.message.guild.members.find(member => member.user.id === user.id)
-        if (member) await discordService.addRole(member, config.suggestionsRole)
+    setActivity = (activity, options) => {
+        this.client.user.setActivity(activity || applicationConfig.defaultActivity, options)
     }
-})
 
-client.on('messageReactionRemove', async (reaction, user) => {
-    const config = guildConfigs[reaction.message.guild.id]
-    if (reaction.message.id === config.suggestionsMessageId && reaction.emoji.id === config.emojiIds.roleEmojiId) {
-        const member = reaction.message.guild.members.find(member => member.user.id === user.id)
-        if (member) await discordService.removeRole(member, config.suggestionsRole)
+    ready = async () => {
+        await Promise.all([this.setActivity(), this.fetchData()])
+        console.log(`Ready to serve on ${this.client.guilds.size} servers, for ${this.client.users.size} users.`)
     }
-})
 
-exports.login = async () => {
-    try {
-        await client.login(process.env.DISCORD_TOKEN)
-        console.log('Client logged in!')
-    } catch (err) {
-        console.error(err)
-        await exports.restart(client)
-    }
-}
-
-exports.restart = async client => {
-    try {
-        await client.destroy()
-        await sleep.sleep(applicationConfig.restartDelay)
-        await exports.login()
-    } catch (err) {
-        console.error(err)
-        await exports.restart(client)
-    }
-}
-
-exports.setActivity = async (name, options)  => {
-    await client.user.setActivity(name, options)
-}
-
-exports.log = async req => {
-    try {
+    guildMemberAdd = async member => {
+        if (member.user.bot) return
         const embed = new RichEmbed()
-            .setAuthor(req.author.tag, req.author.displayAvatarURL)
-            .setDescription(`${req.author} **used** \`${req.command}\` **command in** ${req.message.channel} [Jump ` +
-                `to Message](${req.message.url})\n${req.message}`)
-        await req.guild.channels.find(channel => channel.id === req.config.moderatorLogsChannelId).send(embed)
-    } catch (err) {
-        console.error(err.message)
+            .setTitle(`Hey ${member.user.tag},`)
+            .setDescription(`You're the **${member.guild.memberCount}th** member on **${member.guild.name}** 🎉 !`)
+            .setThumbnail(member.user.displayAvatarURL)
+        const guild = await this.getGuild(member.guild.id)
+        guild.guild.channels.find(channel => channel.id === guild.getData('channels').welcomeChannel).send(
+            embed)
+    }
+
+    messageReactionAdd = async (reaction, user) => {
+        const guild = await this.getGuild(reaction.message.guild.id)
+        if (reaction.message.id === guild.getData('messages').suggestionsMessage && reaction.emoji.id === guild
+            .getData('emojis').roleEmoji) {
+            const member = guild.guild.members.find(member => member.user.id === user.id)
+            if (member) await member.addRole(guild.getData('roles').suggestionsRole)
+        }
+    }
+
+    messageReactionRemove = async (reaction, user) => {
+        const guild = await this.getGuild(reaction.message.guild.id)
+        if (reaction.message.id === guild.getData('messages').suggestionsMessage && reaction.emoji.id === guild
+            .getData('emojis').roleEmoji) {
+            const member = guild.guild.members.find(member => member.user.id === user.id)
+            if (member) await member.removeRole(guild.getData('roles').suggestionsRole)
+        }
+    }
+
+    commandRun = async (command, promise, message) => {
+        if (!message.guild) return
+        await promise
+        const embed = new RichEmbed()
+            .setAuthor(message.author.tag, message.author.displayAvatarURL)
+            .setDescription(`${message.author} **used** \`${command.name}\` **command in** ${message.channel} [Jump ` +
+                `to Message](${message.message.url})\n${message.message}`)
+        const guild = await this.getGuild(message.guild.id)
+        guild.guild.channels.find(channel => channel.id === guild.getData('channels').logsChannel).send(embed)
     }
 }
