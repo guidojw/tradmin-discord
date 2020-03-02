@@ -1,5 +1,6 @@
 'use strict'
 const Command = require('../../controllers/command')
+const { RichEmbed } = require('discord.js')
 
 module.exports = class SuggestCommand extends Command {
     constructor(client) {
@@ -7,11 +8,48 @@ module.exports = class SuggestCommand extends Command {
             group: 'main',
             name: 'suggest',
             description: 'Suggests given suggestion.',
-            examples: ['/suggest "Add cool new thing"']
+            details: 'Suggestion can be encapsulated in quotes (but this is not necessary).',
+            examples: ['suggest Add cool new thing', 'suggest "Add cool new thing"'],
+            clientPermissions: ['MANAGE_MESSAGES', 'ADD_REACTIONS', 'SEND_MESSAGES', 'USE_EXTERNAL_EMOJIS'],
+            args: [
+                {
+                    key: 'suggestion',
+                    prompt: 'What would you like to suggest?',
+                    type: 'string'
+                }
+            ],
+            throttling: {
+                usages: 1,
+                duration: 30 * 60
+            }
         })
     }
 
-    execute = async (message, args, fromPattern, guild) => {
+    hasPermission (message) {
+        const guild = this.client.bot.guilds[message.guild.id]
+        const roles = guild.getData('roles')
+        if (message.member.roles.has(roles.suggestionsBannedRole)) {
+            return 'You are banned from using the delete command.'
+        }
+        const channels = guild.getData('channels')
+        return message.member.roles.has(roles.suggestionsRole) || `Please check <#${channels.rolesChannel}> first.`
+    }
 
+    async execute (message, { suggestion }, guild) {
+        const authorUrl = `https://discordapp.com/users/${message.author.id}`
+        const embed = new RichEmbed()
+            .setDescription(suggestion)
+            .setAuthor(message.author.tag, message.author.displayAvatarURL, authorUrl)
+        if (message.attachments.size > 0) {
+            const attachment = message.attachments.first()
+            if (attachment.height) embed.setImage(attachment.url)
+        }
+        const channels = guild.getData('channels')
+        const emojis = guild.getData('emojis')
+        const newMessage = await guild.guild.channels.get(channels.suggestionsChannel).send(embed)
+        await newMessage.react('✅')
+        await newMessage.react('🚫')
+        await newMessage.react(emojis.suggestionEmoji)
+        message.reply('Successfully suggested', { embed: embed })
     }
 }

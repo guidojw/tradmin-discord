@@ -6,9 +6,11 @@ module.exports = class SetActivityCommand extends Command {
     constructor(client) {
         super(client, {
             group: 'admin',
-            name: 'activity',
+            name: 'setactivity',
+            details: 'The activity type argument must be encapsulated in quotes.',
+            aliases: ['activity'],
             description: 'Sets the current activity of the bot.',
-            examples: ['activity playing "Roblox"', '/activity streaming "Game Development" https://twitch.tv'],
+            examples: ['activity playing "Roblox"', 'activity streaming "Game Development" https://twitch.tv/guidojw'],
             clientPermissions: ['MANAGE_MESSAGES', 'ADD_REACTIONS', 'SEND_MESSAGES'],
             args: [
                 {
@@ -35,7 +37,7 @@ module.exports = class SetActivityCommand extends Command {
         })
     }
 
-    execute = (message, { type, activity, url }) => {
+    execute (message, { type, activity, url }) {
         type = type.toUpperCase()
         if (type === 'STREAMING' && url === '%NONE%') {
             return message.reply('You haven\'t provided an url. Please try again.')

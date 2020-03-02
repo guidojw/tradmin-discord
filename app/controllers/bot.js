@@ -6,6 +6,7 @@ const Guild = require('./guild')
 const Commando = require('discord.js-commando')
 const { RichEmbed } = require('discord.js')
 const SettingProvider = require('./settingProvider')
+const { stripIndents } = require('common-tags')
 
 const applicationConfig = require('../../config/application')
 
@@ -26,7 +27,7 @@ module.exports = class Bot {
             .registerDefaultGroups()
             .registerDefaultTypes()
             .registerDefaultCommands({
-                commandState: false,
+                commandState: true,
                 unknownCommand: false,
                 ping: true,
                 help: true,
@@ -55,10 +56,6 @@ module.exports = class Bot {
         }
     }
 
-    getGuild (guildId) {
-        return this.guilds[guildId]
-    }
-
     setActivity (activity, options) {
         this.client.user.setActivity(activity || applicationConfig.defaultActivity, options)
     }
@@ -69,19 +66,19 @@ module.exports = class Bot {
         this.setActivity()
     }
 
-    async guildMemberAdd (member) {
+    guildMemberAdd (member) {
         if (member.user.bot) return
         const embed = new RichEmbed()
             .setTitle(`Hey ${member.user.tag},`)
             .setDescription(`You're the **${member.guild.memberCount}th** member on **${member.guild.name}** 🎉 !`)
             .setThumbnail(member.user.displayAvatarURL)
-        const guild = this.getGuild(member.guild.id)
+        const guild = this.guilds[member.guild.id]
         guild.guild.channels.find(channel => channel.id === guild.getData('channels').welcomeChannel).send(
             embed)
     }
 
     messageReactionAdd (reaction, user) {
-        const guild = this.getGuild(reaction.message.guild.id)
+        const guild = this.guilds[reaction.message.guild.id]
         if (reaction.message.id === guild.getData('messages').suggestionsMessage && reaction.emoji.id === guild
             .getData('emojis').roleEmoji) {
             const member = guild.guild.members.find(member => member.user.id === user.id)
@@ -90,25 +87,23 @@ module.exports = class Bot {
     }
 
     messageReactionRemove (reaction, user) {
-        console.log('here1')
-        const guild = this.getGuild(reaction.message.guild.id)
+        const guild = this.guilds[reaction.message.guild.id]
         if (reaction.message.id === guild.getData('messages').suggestionsMessage && reaction.emoji.id === guild
             .getData('emojis').roleEmoji) {
-            console.log('here2')
             const member = guild.guild.members.find(member => member.user.id === user.id)
-            console.log('remove')
             if (member) member.removeRole(guild.getData('roles').suggestionsRole)
         }
     }
 
-    commandRun = async (command, promise, message) => {
+    async commandRun (command, promise, message) {
         if (!message.guild) return
         await promise
         const embed = new RichEmbed()
             .setAuthor(message.author.tag, message.author.displayAvatarURL)
-            .setDescription(`${message.author} **used** \`${command.name}\` **command in** ${message.channel} [Jump ` +
-                `to Message](${message.message.url})\n${message.message}`)
-        const guild = this.getGuild(message.guild.id)
+            .setDescription(stripIndents`${message.author} **used** \`${command.name}\` **command in** ${message
+                .channel} [Jump to Message](${message.message.url})
+                ${message.message}`)
+        const guild = this.guilds[message.guild.id]
         guild.guild.channels.find(channel => channel.id === guild.getData('channels').logsChannel).send(embed)
     }
 }
