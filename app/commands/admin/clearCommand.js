@@ -2,7 +2,7 @@
 const Command = require('../../controllers/command')
 const discordService = require('../../services/discord')
 
-module.exports = class DeleteSuggestionCommand extends Command {
+module.exports = class ClearCommand extends Command {
     constructor(client) {
         super(client, {
             group: 'admin',
