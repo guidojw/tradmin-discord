@@ -8,26 +8,26 @@ module.exports = class SettingProvider {
         })
     }
 
-    setSettings = async (guild, settings) => {
-        await (await this.bot.getGuild(guild.id)).setData('settings', settings)
+    async setSettings (guild, settings) {
+        await this.bot.guilds[guild.id].setData('settings', settings)
     }
 
-    getSettings = async guild => {
-        return (await this.bot.getGuild(guild.id)).getData('settings')
+    async getSettings (guild) {
+        return this.bot.guilds[guild.id].getData('settings')
     }
 
-    set = async (guild, key, val) => {
+    async set (guild, key, val) {
         const settings = await this.getSettings(guild)
         settings[key] = val
         return this.setSettings(guild, settings)
     }
 
-    get = async (guild, key, defVal) => {
+    async get (guild, key, defVal) {
         const settings = await this.getSettings(guild)
         return settings[key] || defVal
     }
 
-    clear = async guild => {
+    async clear (guild) {
         return this.setSettings(guild, undefined)
     }
 }

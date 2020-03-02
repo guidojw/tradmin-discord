@@ -19,24 +19,20 @@ module.exports = class Guild {
 
             }))
         }
-        try {
-            this.data = JSON.parse(await fs.promises.readFile(this.dataPath))
-        } catch (err) {
-            throw err
-        }
+        this.data = JSON.parse(await fs.promises.readFile(this.dataPath))
     }
 
-    fetch = async () => {
+    async fetch () {
         await this.guild.channels.get(this.getData('channels').rolesChannel).fetchMessages()
     }
 
-    setData = async (key, value) => {
+    async setData (key, value) {
         if (!this.data) throw new Error('Guild data is not loaded yet.')
         this.data[key] = value
         await fs.promises.writeFile(this.dataPath, JSON.stringify(this.data))
     }
 
-    getData = key => {
+    getData (key) {
         if (!this.data) throw new Error('Guild data is not loaded yet.')
         return this.data[key]
     }
