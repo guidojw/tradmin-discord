@@ -18,8 +18,9 @@
   "dependencies": {
     "@sentry/node": "^5.13.1",
     "discord.js": "^11.6.1",
+    "discord.js-commando": "^0.10.0",
     "dotenv": "^8.2.0",
-    "sleep": "^6.1.0"
+    "common-tags": "^1.8.0"
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",

@@ -1,0 +1,29 @@
+{
+  "adminRoles": [
+    "465334823129448449",
+    "683736426332028993",
+    "671846947895902218",
+    "465943620348936213"
+  ],
+  "roles": {
+    "suggestionsBannedRole": "S660900980535197716",
+    "suggestionsRole": "668534056803106816"
+  },
+  "messages": {
+    "suggestionsMessage": "668534620278751233",
+    "firstSuggestionMessage": "673198887493697596",
+    "firstBugReportMessage": "673197951035899943"
+  },
+  "channels": {
+    "rolesChannel": "668533003378491392",
+    "suggestionsChannel": "673198440074706964",
+    "logsChannel": "465337145394200576",
+    "welcomeChannel": "465365723615723530",
+    "bugReportsChannel": "673197712149053465",
+    "gameScreenshotsChannel": "465335598711046145"
+  },
+  "emojis": {
+    "roleEmoji": "528625310850088970",
+    "suggestionEmoji": "595543001158254606"
+  }
+}
