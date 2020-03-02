@@ -7,19 +7,17 @@ exports.isAdmin = (member, adminRoles) => {
 }
 
 exports.prompt = (channel, author, ...options) => {
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async resolve => {
         const message = await channel.send(...options)
+        const filter = (reaction, user) => (reaction.emoji.name === '✅' || reaction.emoji.name === '🚫') && user.id
+            === author.id
+        const collector = message.createReactionCollector(filter, { time: 60000 })
+        collector.on('collect', () => collector.stop())
+        collector.on('end', collected => {
+            const reaction = collected.first()
+            resolve(reaction && reaction.emoji.name === '✅')
+        })
         await message.react('✅')
         await message.react('🚫')
-        try {
-            const filter = (reaction, user) => (reaction.emoji.name === '✅' || reaction.emoji.name === '🚫') && user.id
-                === author.id
-            const collected = await message.awaitReactions(filter, { max: 1, time: 60000, errors: ['time'] })
-            const reaction = collected.first()
-            resolve(reaction.emoji.name === '✅')
-        } catch (err) {
-            reject(new Error('Prompt timed out.'))
-        }
-        message.delete()
     })
 }

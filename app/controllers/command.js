@@ -18,8 +18,8 @@ module.exports = class Command extends Commando.Command {
         return true
     }
 
-    async run (message, args, fromPattern) {
+    async run (message, args, _fromPattern) {
         const guild = this.client.bot.getGuild(message.guild.id)
-        return this.execute(message, args, fromPattern, guild)
+        return this.execute(message, args, guild)
     }
 }
