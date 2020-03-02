@@ -26,23 +26,18 @@ module.exports = class Guild {
         }
     }
 
-    fetchData = async () => {
-        this.guild.channels.find(channel => channel.id === this.getData('channels').rolesChannel)
-            .fetchMessages()
+    fetch = async () => {
+        await this.guild.channels.get(this.getData('channels').rolesChannel).fetchMessages()
     }
 
     setData = async (key, value) => {
-        if (!this.data) {
-            throw new Error('Guild data is not loaded yet.')
-        }
+        if (!this.data) throw new Error('Guild data is not loaded yet.')
         this.data[key] = value
         await fs.promises.writeFile(this.dataPath, JSON.stringify(this.data))
     }
 
     getData = key => {
-        if (!this.data) {
-            throw new Error('Guild data is not loaded yet.')
-        }
+        if (!this.data) throw new Error('Guild data is not loaded yet.')
         return this.data[key]
     }
 }

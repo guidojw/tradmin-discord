@@ -1,20 +1,25 @@
 'use strict'
 const Commando = require('discord.js-commando')
+const discordService = require('../services/discord')
 
 module.exports = class Command extends Commando.Command {
     constructor(client, info) {
         info.memberName = info.name
-        info.argsPromptLimit = 1
-        info.guildOnly = true
+        info.argsPromptLimit = info.argsPromptLimit || 1
+        info.guildOnly = info.guildOnly || true
         super(client, info)
     }
 
-    hasPermission = message => {
+    hasPermission (message) {
+        if (this.group.name.toLowerCase() === 'admin') {
+            const guild = this.client.bot.getGuild(message.guild.id)
+            return discordService.isAdmin(message.member, guild.getData('adminRoles'))
+        }
         return true
     }
 
-    run = async (message, args, fromPattern) => {
-        this.guild = this.client.bot.getGuild(message.guild.id)
-        return this.execute(message, args, fromPattern)
+    async run (message, args, fromPattern) {
+        const guild = this.client.bot.getGuild(message.guild.id)
+        return this.execute(message, args, fromPattern, guild)
     }
 }

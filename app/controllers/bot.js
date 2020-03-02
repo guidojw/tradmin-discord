@@ -33,7 +33,7 @@ module.exports = class Bot {
                 eval: true,
                 prefix: true
             })
-            // .registerCommandsIn(path.join(__dirname, '../commands'))
+            .registerCommandsIn(path.join(__dirname, '../commands'))
 
         this.guilds = {}
 
@@ -46,57 +46,58 @@ module.exports = class Bot {
         this.client.login(process.env.DISCORD_TOKEN)
     }
 
-    fetchData = () => {
+    async fetch () {
         for (const guild of this.client.guilds.values()) {
-            this.getGuild(guild.id)
+            const newGuild = new Guild(this, guild.id)
+            await newGuild.loadData()
+            await newGuild.fetch()
+            this.guilds[guild.id] = newGuild
         }
     }
 
-    getGuild = async guildId => {
-        if (!this.guilds[guildId]) {
-            const guild = new Guild(this, guildId)
-            await guild.loadData()
-            await guild.fetchData()
-            this.guilds[guildId] = guild
-        }
+    getGuild (guildId) {
         return this.guilds[guildId]
     }
 
-    setActivity = (activity, options) => {
+    setActivity (activity, options) {
         this.client.user.setActivity(activity || applicationConfig.defaultActivity, options)
     }
 
-    ready = async () => {
-        await Promise.all([this.setActivity(), this.fetchData()])
+    ready () {
+        this.fetch()
         console.log(`Ready to serve on ${this.client.guilds.size} servers, for ${this.client.users.size} users.`)
+        this.setActivity()
     }
 
-    guildMemberAdd = async member => {
+    async guildMemberAdd (member) {
         if (member.user.bot) return
         const embed = new RichEmbed()
             .setTitle(`Hey ${member.user.tag},`)
             .setDescription(`You're the **${member.guild.memberCount}th** member on **${member.guild.name}** 🎉 !`)
             .setThumbnail(member.user.displayAvatarURL)
-        const guild = await this.getGuild(member.guild.id)
+        const guild = this.getGuild(member.guild.id)
         guild.guild.channels.find(channel => channel.id === guild.getData('channels').welcomeChannel).send(
             embed)
     }
 
-    messageReactionAdd = async (reaction, user) => {
-        const guild = await this.getGuild(reaction.message.guild.id)
+    messageReactionAdd (reaction, user) {
+        const guild = this.getGuild(reaction.message.guild.id)
         if (reaction.message.id === guild.getData('messages').suggestionsMessage && reaction.emoji.id === guild
             .getData('emojis').roleEmoji) {
             const member = guild.guild.members.find(member => member.user.id === user.id)
-            if (member) await member.addRole(guild.getData('roles').suggestionsRole)
+            if (member) member.addRole(guild.getData('roles').suggestionsRole)
         }
     }
 
-    messageReactionRemove = async (reaction, user) => {
-        const guild = await this.getGuild(reaction.message.guild.id)
+    messageReactionRemove (reaction, user) {
+        console.log('here1')
+        const guild = this.getGuild(reaction.message.guild.id)
         if (reaction.message.id === guild.getData('messages').suggestionsMessage && reaction.emoji.id === guild
             .getData('emojis').roleEmoji) {
+            console.log('here2')
             const member = guild.guild.members.find(member => member.user.id === user.id)
-            if (member) await member.removeRole(guild.getData('roles').suggestionsRole)
+            console.log('remove')
+            if (member) member.removeRole(guild.getData('roles').suggestionsRole)
         }
     }
 
@@ -107,7 +108,7 @@ module.exports = class Bot {
             .setAuthor(message.author.tag, message.author.displayAvatarURL)
             .setDescription(`${message.author} **used** \`${command.name}\` **command in** ${message.channel} [Jump ` +
                 `to Message](${message.message.url})\n${message.message}`)
-        const guild = await this.getGuild(message.guild.id)
+        const guild = this.getGuild(message.guild.id)
         guild.guild.channels.find(channel => channel.id === guild.getData('channels').logsChannel).send(embed)
     }
 }
