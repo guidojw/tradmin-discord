@@ -11,7 +11,7 @@ const { stripIndents } = require('common-tags')
 const applicationConfig = require('../../config/application')
 
 module.exports = class Bot {
-    constructor() {
+    constructor () {
         this.client = new Commando.Client({
             commandPrefix: applicationConfig.defaultPrefix,
             owner: applicationConfig.owner,
@@ -56,8 +56,8 @@ module.exports = class Bot {
         }
     }
 
-    setActivity (activity, options) {
-        this.client.user.setActivity(activity || applicationConfig.defaultActivity, options)
+    setActivity (name, options) {
+        this.client.user.setActivity(name || applicationConfig.defaultActivity, options)
     }
 
     ready () {

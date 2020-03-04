@@ -13,7 +13,7 @@ module.exports = class SettingProvider {
     }
 
     async getSettings (guild) {
-        return this.bot.guilds[guild.id].getData('settings')
+        return this.bot.guilds[guild.id].getData('settings') || {}
     }
 
     async set (guild, key, val) {
