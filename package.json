@@ -16,7 +16,7 @@
   "author": "Guido de Jong",
   "license": "MIT",
   "dependencies": {
-    "@sentry/node": "^5.13.1",
+    "@sentry/node": "^5.13.2",
     "discord.js": "^11.6.1",
     "discord.js-commando": "^0.10.0",
     "dotenv": "^8.2.0",
