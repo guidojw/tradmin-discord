@@ -1,6 +1,6 @@
 'use strict'
 const Command = require('../../controllers/command')
-const { validUrl } = require('../../helpers/url')
+const urlHelper = require('../../helpers/url')
 
 module.exports = class SetActivityCommand extends Command {
     constructor(client) {
@@ -30,10 +30,8 @@ module.exports = class SetActivityCommand extends Command {
                     key: 'url',
                     prompt: '',
                     type: 'string',
-                    default: '%NONE%',
-                    validate: val => {
-                        return validUrl(val)
-                    }
+                    default: '',
+                    validate: urlHelper.validUrl
                 }
             ]
         })
@@ -41,9 +39,9 @@ module.exports = class SetActivityCommand extends Command {
 
     execute (message, { type, activity, url }) {
         type = type.toUpperCase()
-        if (type === 'STREAMING' && url === '%NONE%') {
+        if (type === 'STREAMING' && !url) {
             return message.reply('You haven\'t provided an url. Please try again.')
         }
-        this.client.bot.setActivity(activity, { type: type, url: url === '%NONE%' ? undefined: url })
+        this.client.bot.setActivity(activity, { type: type, url: url || undefined })
     }
 }
