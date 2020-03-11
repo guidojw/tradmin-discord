@@ -6,7 +6,7 @@ module.exports = class Guild {
     constructor(bot, id) {
         this.bot = bot
         this.id = id
-        this.guild = this.bot.client.guilds.get(id)
+        this.guild = this.bot.client.guilds.cache.get(id)
         this.dataPath = path.join(__dirname, '../../data', `${id}.json`)
         this.data = undefined
     }
@@ -20,10 +20,6 @@ module.exports = class Guild {
             }))
         }
         this.data = JSON.parse(await fs.promises.readFile(this.dataPath))
-    }
-
-    async fetch () {
-        await this.guild.channels.get(this.getData('channels').rolesChannel).fetchMessages()
     }
 
     async setData (key, value) {
