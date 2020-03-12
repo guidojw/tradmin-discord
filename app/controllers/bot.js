@@ -80,7 +80,7 @@ module.exports = class Bot {
 
     async messageReactionAdd (reaction, user) {
         if (reaction.partial) await reaction.fetch()
-        const guild = await this.guilds[reaction.message.guild.id]
+        const guild = this.guilds[reaction.message.guild.id]
         if (reaction.message.id === guild.getData('messages').suggestionsMessage && reaction.emoji.id === guild
             .getData('emojis').roleEmoji) {
             const member = guild.guild.members.cache.find(member => member.user.id === user.id)
@@ -88,8 +88,8 @@ module.exports = class Bot {
         }
     }
 
-    async messageReactionRemove (reaction, user) {
-        const guild = await this.guilds[reaction.message.guild.id]
+    messageReactionRemove (reaction, user) {
+        const guild = this.guilds[reaction.message.guild.id]
         if (reaction.message.id === guild.getData('messages').suggestionsMessage && reaction.emoji.id === guild
             .getData('emojis').roleEmoji) {
             const member = guild.guild.members.cache.find(member => member.user.id === user.id)
@@ -105,7 +105,7 @@ module.exports = class Bot {
             .setDescription(stripIndents`${message.author} **used** \`${command.name}\` **command in** ${message
                 .channel} [Jump to Message](${message.url})
                 ${message.content}`)
-        const guild = await this.guilds[message.guild.id]
+        const guild = this.guilds[message.guild.id]
         guild.guild.channels.cache.get(guild.getData('channels').logsChannel).send(embed)
     }
 }

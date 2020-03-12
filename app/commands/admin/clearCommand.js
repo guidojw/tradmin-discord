@@ -37,7 +37,7 @@ module.exports = class ClearCommand extends Command {
             let messages
             do {
                 messages = await channel.messages.fetch({ after: channel.id === suggestionsChannelId ? guildMessages
-                        .firstSuggestionMessage : guildMessages.firstBugReportMessage })
+                    .firstSuggestionMessage : guildMessages.firstBugReportMessage })
                 if (messages.size > 0) {
                     try {
                         await channel.bulkDelete(messages)
