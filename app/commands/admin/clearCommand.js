@@ -40,7 +40,7 @@ module.exports = class ClearCommand extends Command {
                         .firstSuggestionMessage : guildMessages.firstBugReportMessage })
                 if (messages.size > 0) {
                     try {
-                        await channel.bulkDelete(messages.size)
+                        await channel.bulkDelete(messages)
                     } catch (err) {
                         for (const message of messages.values()) {
                             await message.delete()
