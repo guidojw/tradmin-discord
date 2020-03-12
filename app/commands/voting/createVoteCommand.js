@@ -6,8 +6,7 @@ module.exports = class CreateVoteCommand extends Command {
         super(client, {
             group: 'voting',
             name: 'createvote',
-            description: '',
-            details: '',
+            description: 'Creates a vote with given name and description.',
             clientPermissions: ['MANAGE_MESSAGES', 'SEND_MESSAGES'],
             args: [{
                 key: 'name',

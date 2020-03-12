@@ -6,8 +6,7 @@ module.exports = class StartVoteCommand extends Command {
         super(client, {
             group: 'voting',
             name: 'startvote',
-            description: '',
-            details: '',
+            description: 'Starts the vote created using the createvote command.',
             clientPermissions: ['MANAGE_MESSAGES', 'SEND_MESSAGES', 'ADD_REACTIONS'],
             args: [{
                 key: 'channel',
@@ -15,6 +14,10 @@ module.exports = class StartVoteCommand extends Command {
                 prompt: ''
             }, {
                 key: 'date',
+                type: 'string',
+                prompt: ''
+            }, {
+                key: 'time',
                 type: 'string',
                 prompt: ''
             }]

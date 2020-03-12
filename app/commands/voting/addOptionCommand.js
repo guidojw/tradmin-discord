@@ -6,8 +6,7 @@ module.exports = class AddOptionCommand extends Command {
         super(client, {
             group: 'voting',
             name: 'addoption',
-            description: '',
-            details: '',
+            description: 'Adds a vote option with given name and description.',
             clientPermissions: ['MANAGE_MESSAGES', 'SEND_MESSAGES'],
             args: [{
                 key: 'name',
