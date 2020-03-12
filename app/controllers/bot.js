@@ -25,6 +25,7 @@ module.exports = class Bot {
         this.client.registry
             .registerGroup('admin', 'Admin')
             .registerGroup('main', 'Main')
+            .registerGroup('bot', 'Bot')
             .registerDefaultGroups()
             .registerDefaultTypes()
             .registerDefaultCommands({
