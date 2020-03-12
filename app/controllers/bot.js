@@ -26,6 +26,7 @@ module.exports = class Bot {
             .registerGroup('admin', 'Admin')
             .registerGroup('main', 'Main')
             .registerGroup('bot', 'Bot')
+            .registerGroup('voting', 'Voting')
             .registerDefaultGroups()
             .registerDefaultTypes()
             .registerDefaultCommands({
