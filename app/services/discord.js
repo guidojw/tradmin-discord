@@ -24,22 +24,25 @@ exports.prompt = async (channel, author, message) => {
     return promise
 }
 
-exports.getVoteEmbeds = voteData => {
-    const embeds = []
+exports.getVoteMessages = async (voteData, client) => {
+    const messages = { options: [] }
+    messages.intro = `**${voteData.title}**\n\n${voteData.description}`
+    messages.optionHeader = '**Participants:**'
+    for (const [id, option] of Object.entries(voteData.options)) {
+        const user = client.users.cache.get(id)
+        if (user) {
+            const embed = new MessageEmbed()
+                .setTitle(user.tag)
+                .setThumbnail(user.displayAvatarURL())
+                .setDescription(option.description)
+                .setFooter('Votes: 0')
+            messages.options.push(embed)
+        }
+    }
     const embed = new MessageEmbed()
-        .setTitle(voteData.title)
-        .setDescription(voteData.description)
         .setFooter('You can make your vote by clicking on the reactions underneath the options below.\nOnly your' +
             ' first vote will count and removing your reaction will not remove your vote.\nEnds at')
         .setTimestamp(voteData.end || new Date().getTime())
-    embeds.push(embed)
-    for (const option of voteData.options) {
-        const embed = new MessageEmbed()
-            .setTitle(option.name)
-            .setDescription(option.description)
-            .setFooter('Votes: 0')
-        if (option.image) embed.setThumbnail(option.image)
-        embeds.push(embed)
-    }
-    return embeds
+    messages.info = embed
+    return messages
 }

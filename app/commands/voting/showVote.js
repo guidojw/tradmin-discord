@@ -1,6 +1,7 @@
 'use strict'
 const Command = require('../../controllers/command')
 const discordService = require('../../services/discord')
+const { MessageAttachment } = require('discord.js')
 
 module.exports = class StartVoteCommand extends Command {
     constructor (client) {
@@ -9,23 +10,20 @@ module.exports = class StartVoteCommand extends Command {
             name: 'showvote',
             aliases: ['vshow'],
             description: 'Posts a mock of what the vote posted by the startvote command will look like.',
-            clientPermissions: ['MANAGE_MESSAGES', 'SEND_MESSAGES', 'USE_EXTERNAL_EMOJIS']
+            clientPermissions: ['MANAGE_MESSAGES', 'SEND_MESSAGES']
         })
     }
 
     async execute (message, _args, guild) {
         const voteData = guild.getData('vote')
         if (!voteData) return message.reply('There is no vote created yet, create one using the createvote command!')
-        const embeds = discordService.getVoteEmbeds(voteData)
-        const emojis = guild.getData('emojis')
+        const messages = await discordService.getVoteMessages(voteData, this.client)
         await message.reply('The vote will look like this:')
-        let first = true
-        for (const embed of embeds) {
-            const newMessage = await message.channel.send(embed)
-            if (!first) {
-                newMessage.react(emojis.voteEmoji)
-            }
-            first = false
+        await message.channel.send(messages.intro)
+        await message.channel.send(messages.info)
+        await message.channel.send(messages.optionHeader)
+        for (const embed of messages.options) {
+            (await message.channel.send(embed)).react('✏️')
         }
     }
 }
