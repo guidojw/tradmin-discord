@@ -56,8 +56,7 @@ module.exports = class StartVoteCommand extends Command {
         voteData.timer.message = timerMessage.id
         voteData.channel = channel.id
         guild.setData('vote', voteData)
-        guild.scheduleJob('timerJob', ' */3 * * * *', () => new timerJob().perform(voteData,
-            guild))
+        guild.scheduleJob('timerJob', ' */3 * * * *', () => timerJob(voteData, guild))
         message.reply(`Posted the vote in ${channel}!`)
     }
 }
