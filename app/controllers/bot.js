@@ -54,6 +54,7 @@ module.exports = class Bot {
         for (const guildId of this.client.guilds.cache.keys()) {
             this.guilds[guildId] = new Guild(this, guildId)
             await this.guilds[guildId].loadData()
+            this.guilds[guildId].init()
         }
     }
 

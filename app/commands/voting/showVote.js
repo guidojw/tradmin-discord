@@ -1,7 +1,6 @@
 'use strict'
 const Command = require('../../controllers/command')
 const discordService = require('../../services/discord')
-const { MessageAttachment } = require('discord.js')
 
 module.exports = class StartVoteCommand extends Command {
     constructor (client) {
@@ -22,8 +21,9 @@ module.exports = class StartVoteCommand extends Command {
         await message.channel.send(messages.intro)
         await message.channel.send(messages.info)
         await message.channel.send(messages.optionHeader)
-        for (const embed of messages.options) {
+        for (const embed of Object.values(messages.options)) {
             (await message.channel.send(embed)).react('✏️')
         }
+        await message.channel.send(messages.timer)
     }
 }

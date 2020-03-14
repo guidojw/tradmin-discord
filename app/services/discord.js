@@ -1,5 +1,6 @@
 'use strict'
 const { MessageEmbed } = require('discord.js')
+const timeHelper = require('../helpers/time')
 
 exports.isAdmin = (member, adminRoles) => {
     for (const roleId of adminRoles) {
@@ -25,9 +26,9 @@ exports.prompt = async (channel, author, message) => {
 }
 
 exports.getVoteMessages = async (voteData, client) => {
-    const messages = { options: [] }
+    const messages = { options: {} }
     messages.intro = `**${voteData.title}**\n\n${voteData.description}`
-    messages.optionHeader = '**Participants:**'
+    messages.optionHeader = '👥 **Participants:**'
     for (const [id, option] of Object.entries(voteData.options)) {
         const user = client.users.cache.get(id)
         if (user) {
@@ -36,7 +37,7 @@ exports.getVoteMessages = async (voteData, client) => {
                 .setThumbnail(user.displayAvatarURL())
                 .setDescription(option.description)
                 .setFooter('Votes: 0')
-            messages.options.push(embed)
+            messages.options[id] = embed
         }
     }
     const embed = new MessageEmbed()
@@ -44,5 +45,7 @@ exports.getVoteMessages = async (voteData, client) => {
             ' first vote will count and removing your reaction will not remove your vote.\nEnds at')
         .setTimestamp(voteData.end || new Date().getTime())
     messages.info = embed
+    messages.timer = `🕐️ *${timeHelper.getDurationString(voteData.timer ? voteData.timer.end - new Date()
+        .getTime() : 0)}* left to vote!`
     return messages
 }

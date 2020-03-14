@@ -52,3 +52,14 @@ exports.getTimeInfo = timeString => {
     const minutes = timeString.substring(timeString.indexOf(':') + 1, timeString.length)
     return { hours: hours, minutes: minutes }
 }
+
+exports.getDurationString = milliseconds => {
+    const days = Math.floor(milliseconds / (24 * 60 * 60 * 1000))
+    const daysMilliseconds = milliseconds % (24 * 60 * 60 * 1000)
+    const hours = Math.floor(daysMilliseconds / (60 * 60 * 1000))
+    const hoursMilliseconds = milliseconds % (60 * 60 * 1000)
+    const minutes = Math.floor(hoursMilliseconds / (60 * 1000))
+    const minutesMilliseconds = milliseconds % (60 * 1000)
+    const seconds = Math.floor(minutesMilliseconds / (1000))
+    return days + 'd ' + hours + 'h ' + minutes + 'm ' + seconds + 's'
+}
