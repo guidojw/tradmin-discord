@@ -42,15 +42,16 @@ exports.getVoteMessages = async (voteData, client) => {
                     .setThumbnail(user.displayAvatarURL())
                     .setDescription(option.description)
                     .setFooter('Votes: 0')
-                    .setColor(user.displayColor)
             }
             first = false
         }
     }
     messages.info = {
         options: new MessageEmbed()
-            .setFooter('You can vote by reacting the pencil on the participant you want to vote on.\nOnly your first' +
-                ' vote will count and removing your reaction will not remove your vote.\nEnds at')
+            .setFooter('You can vote by reacting the pencil on the participant you want to vote on.\nOnly your ' +
+                'first vote will count and removing your reaction will not remove your vote.\nEnds at')
+            // The showvote command can call this with voteData that has no timer set yet so substitute with current
+            // time as timestamp.
             .setTimestamp(voteData.end || new Date().getTime())
     }
     messages.timer = {

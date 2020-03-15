@@ -99,7 +99,7 @@ module.exports = class Bot {
         if (voteData.timer && voteData.timer.end > new Date().getTime()) {
             let choice
             for (const option of Object.values(voteData.options)) {
-                if (option.votes.includes(member.id)) break
+                if (option.votes.includes(member.id)) return
                 if (reaction.message.id === option.message) choice = option
             }
             if (choice) {
@@ -110,11 +110,11 @@ module.exports = class Bot {
     }
 
     async messageReactionRemove (reaction, user) {
+        if (user.partial) await user.fetch()
         if (user.bot) return
         const guild = this.guilds[reaction.message.guild.id]
         if (reaction.message.id === guild.getData('messages').suggestionsMessage && reaction.emoji.id === guild
             .getData('emojis').roleEmoji) {
-            if (user.partial) await user.fetch()
             const member = guild.guild.member(user)
             if (member) member.roles.remove(guild.getData('roles').suggestionsRole)
         }

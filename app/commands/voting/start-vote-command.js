@@ -34,7 +34,7 @@ module.exports = class StartVoteCommand extends Command {
 
     async execute (message, { channel, date, time }, guild) {
         const voteData = guild.getData('vote')
-        if (!voteData) return message.reply('There is no vote created yet, create one using the createvote command.')
+        if (!voteData) return message.reply('There\'s no vote created yet, create one using the createvote command.')
         if (voteData.timer) return message.reply('The vote has already started.')
         const dateInfo = timeHelper.getDateInfo(date)
         const timeInfo = timeHelper.getTimeInfo(time)

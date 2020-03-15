@@ -19,12 +19,13 @@ module.exports = class StartVoteCommand extends Command {
         if (voteData.timer && voteData.timer.end > new Date().getTime()) return message.reply('The vote hasn\'t ended' +
             ' yet.')
         const choice = await discordService.prompt(message.channel, message.author, await message.reply('Are you sure' +
-            ' you would like to delete the created vote?'))
+            ' you would like to delete the created vote?\n**You won\'t be able to use the results and showvote ' +
+            ' commands anymore.**'))
         if (choice) {
             guild.setData('vote', undefined)
             message.reply('Deleted vote.')
         } else {
-            message.reply('Did not delete vote.')
+            message.reply('Didn\'t delete vote.')
         }
     }
 }

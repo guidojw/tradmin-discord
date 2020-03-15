@@ -24,7 +24,7 @@ module.exports = class CreateVoteCommand extends Command {
     }
 
     execute (message, { title, description }, guild) {
-        if (guild.getData('vote')) return message.reply('There is already a vote created.')
+        if (guild.getData('vote')) return message.reply('There\'s already a vote created.')
 
         const voteData = { title: title, description: description, options: [] }
         if (message.attachments.size > 0) voteData.image = message.attachments[0].url

@@ -7,8 +7,8 @@ module.exports = class ResultsCommand extends Command {
     constructor (client) {
         super(client, {
             group: 'voting',
-            name: 'results',
-            aliases: ['vresults'],
+            name: 'voteresults',
+            aliases: ['vresults', 'results'],
             description: 'Posts the results of the vote.',
             clientPermissions: ['MANAGE_MESSAGES', 'SEND_MESSAGES']
         })
@@ -16,8 +16,8 @@ module.exports = class ResultsCommand extends Command {
 
     execute (message, _args, guild) {
         const voteData = guild.getData('vote')
-        if (!voteData) return message.reply('There is no vote created yet, create one using the createvote command.')
-        if (!voteData.timer) return message.reply('That vote hasn\'t started yet.')
+        if (!voteData) return message.reply('There\'s no vote created yet, create one using the createvote command.')
+        if (!voteData.timer) return message.reply('The vote hasn\'t started yet.')
         if (voteData.timer && voteData.timer.end > new Date().getTime()) return message.reply('The vote hasn\'t ended' +
             ' yet.')
 
