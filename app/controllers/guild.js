@@ -2,8 +2,6 @@
 const fs = require('fs')
 const path = require('path')
 const cron = require('node-cron')
-const updateTimerJob = require('../jobs/update-timer')
-const saveVoteJob = require('../jobs/save-vote')
 
 const cronConfig = require('../../config/cron')
 
@@ -46,7 +44,7 @@ module.exports = class Guild {
             this.scheduleJob('updateTimerJob')
         }
 
-        this.scheduleJob('nitroBoosterReportJob')
+        this.scheduleJob('premiumMembersReportJob')
     }
 
     scheduleJob (name) {

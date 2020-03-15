@@ -1,7 +1,7 @@
 'use strict'
 const saveVoteJob = require('../app/jobs/save-vote')
 const updateTimerJob = require('../app/jobs/update-timer')
-const nitroBoosterReportJob = require('../app/jobs/nitro-booster-report')
+const premiumMembersReportJob = require('../app/jobs/premium-members-report')
 
 module.exports = {
   'saveVoteJob': {
@@ -12,8 +12,8 @@ module.exports = {
     'expression': '*/2 * * * *',
     'job': updateTimerJob
   },
-  'nitroBoosterReportJob': {
-    'expression': '*/1 * * * *',
-    'job': nitroBoosterReportJob
+  'premiumMembersReportJob': {
+    'expression': '0 12 */1 * *',
+    'job': premiumMembersReportJob
   }
 }
