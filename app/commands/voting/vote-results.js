@@ -22,7 +22,7 @@ module.exports = class VoteResultsCommand extends Command {
             ' yet.')
 
         const embed = new MessageEmbed()
-            .setTitle('Vote Results')
+            .setTitle(`${voteData.title} Results`)
         const scores = []
         for (const [id, option] of Object.entries(voteData.options)) {
             scores.push({ id: id, votes: option.votes.length })
