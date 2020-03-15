@@ -2,8 +2,8 @@
 const fs = require('fs')
 const path = require('path')
 const cron = require('node-cron')
-const updateTimerJob = require('../jobs/update-timer')
-const saveVoteJob = require('../jobs/save-vote')
+
+const cronConfig = require('../../config/cron')
 
 module.exports = class Guild {
     constructor(bot, id) {
@@ -40,14 +40,17 @@ module.exports = class Guild {
     init () {
         const voteData = this.getData('vote')
         if (voteData && voteData.timer && voteData.timer.end > new Date().getTime()) {
-            this.scheduleJob('saveVoteJob', '*/2 * * * *', () => saveVoteJob(this))
-            this.scheduleJob('updateTimerJob', '*/2 * * * *', () => updateTimerJob(this))
+            this.scheduleJob('saveVoteJob')
+            this.scheduleJob('updateTimerJob')
         }
+
+        this.scheduleJob('premiumMembersReportJob')
     }
 
-    scheduleJob (name, expression, job) {
+    scheduleJob (name) {
         if (this.jobs[name]) throw new Error('A job with that name already exists.')
-        this.jobs[name] = cron.schedule(expression, job)
+        const job = cronConfig[name]
+        this.jobs[name] = cron.schedule(job.expression, () => job.job(this))
     }
 
     stopJob (name) {
