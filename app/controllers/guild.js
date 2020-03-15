@@ -2,7 +2,7 @@
 const fs = require('fs')
 const path = require('path')
 const cron = require('node-cron')
-const timerJob = require('../jobs/timerJob')
+const timerJob = require('../jobs/update-timer')
 
 module.exports = class Guild {
     constructor(bot, id) {

@@ -37,6 +37,7 @@ exports.getVoteMessages = async (voteData, client) => {
                 .setThumbnail(user.displayAvatarURL())
                 .setDescription(option.description)
                 .setFooter('Votes: 0')
+                .setColor(user.displayColor)
             messages.options[id] = embed
         }
     }

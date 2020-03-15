@@ -2,7 +2,7 @@
 const Command = require('../../controllers/command')
 const timeHelper = require('../../helpers/time')
 const discordService = require('../../services/discord')
-const timerJob = require('../../jobs/timerJob')
+const timerJob = require('../../jobs/update-timer')
 
 module.exports = class StartVoteCommand extends Command {
     constructor (client) {
