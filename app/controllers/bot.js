@@ -5,7 +5,7 @@ const path = require('path')
 const Guild = require('./guild')
 const Commando = require('discord.js-commando')
 const { MessageEmbed } = require('discord.js')
-const SettingProvider = require('./settingProvider')
+const SettingProvider = require('./setting-provider')
 const { stripIndents } = require('common-tags')
 
 const applicationConfig = require('../../config/application')
@@ -26,6 +26,7 @@ module.exports = class Bot {
             .registerGroup('admin', 'Admin')
             .registerGroup('main', 'Main')
             .registerGroup('bot', 'Bot')
+            .registerGroup('voting', 'Voting')
             .registerDefaultGroups()
             .registerDefaultTypes()
             .registerDefaultCommands({
@@ -53,6 +54,7 @@ module.exports = class Bot {
         for (const guildId of this.client.guilds.cache.keys()) {
             this.guilds[guildId] = new Guild(this, guildId)
             await this.guilds[guildId].loadData()
+            this.guilds[guildId].init()
         }
     }
 
@@ -79,20 +81,41 @@ module.exports = class Bot {
     }
 
     async messageReactionAdd (reaction, user) {
+        if (user.partial) await user.fetch()
+        if (user.bot) return
         if (reaction.partial) await reaction.fetch()
         const guild = this.guilds[reaction.message.guild.id]
-        if (reaction.message.id === guild.getData('messages').suggestionsMessage && reaction.emoji.id === guild
-            .getData('emojis').roleEmoji) {
-            const member = guild.guild.members.cache.find(member => member.user.id === user.id)
-            if (member) member.roles.add(guild.getData('roles').suggestionsRole)
+        const member = guild.guild.member(user)
+
+        const messages = guild.getData('messages')
+        const emojis = guild.getData('emojis')
+        const roles = guild.getData('roles')
+        if (reaction.message.id === messages.suggestionsMessage && reaction.emoji.id === emojis.roleEmoji) {
+            if (member) member.roles.add(roles.suggestionsRole)
+            return
+        }
+
+        const voteData = guild.getData('vote')
+        if (voteData.timer && voteData.timer.end > new Date().getTime()) {
+            let choice
+            for (const option of Object.values(voteData.options)) {
+                if (option.votes.includes(member.id)) return
+                if (reaction.message.id === option.message) choice = option
+            }
+            if (choice) {
+                choice.votes.push(member.id)
+                reaction.message.edit(reaction.message.embeds[0].setFooter(`Votes: ${choice.votes.length}`))
+            }
         }
     }
 
-    messageReactionRemove (reaction, user) {
+    async messageReactionRemove (reaction, user) {
+        if (user.partial) await user.fetch()
+        if (user.bot) return
         const guild = this.guilds[reaction.message.guild.id]
         if (reaction.message.id === guild.getData('messages').suggestionsMessage && reaction.emoji.id === guild
             .getData('emojis').roleEmoji) {
-            const member = guild.guild.members.cache.find(member => member.user.id === user.id)
+            const member = guild.guild.member(user)
             if (member) member.roles.remove(guild.getData('roles').suggestionsRole)
         }
     }
