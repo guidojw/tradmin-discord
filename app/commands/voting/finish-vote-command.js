@@ -15,7 +15,8 @@ module.exports = class StartVoteCommand extends Command {
 
     execute (message, _args, guild) {
         const voteData = guild.getData('vote')
-        if (!voteData) return message.reply('There is no vote created yet, create one using the vcreate command.')
+        if (!voteData) return message.reply('There is no vote created yet, create one using the createvote command.')
+
 
     }
 }

@@ -16,6 +16,7 @@ module.exports = class StartVoteCommand extends Command {
     async execute (message, _args, guild) {
         const voteData = guild.getData('vote')
         if (!voteData) return message.reply('There is no vote created yet, create one using the createvote command!')
+
         const messages = await discordService.getVoteMessages(voteData, this.client)
         await message.reply('The vote will look like this:')
         await message.channel.send(messages.intro)

@@ -2,7 +2,8 @@
 const Command = require('../../controllers/command')
 const timeHelper = require('../../helpers/time')
 const discordService = require('../../services/discord')
-const timerJob = require('../../jobs/update-timer')
+const updateTimerJob = require('../../jobs/update-timer')
+const saveVoteJob = require('../../jobs/save-vote')
 
 module.exports = class StartVoteCommand extends Command {
     constructor (client) {
@@ -42,21 +43,22 @@ module.exports = class StartVoteCommand extends Command {
         const nowUnix = new Date().getTime()
         const afterNow = dateUnix - nowUnix > 0
         if (!afterNow) return message.reply('Please give a date and time that are after now!')
+
+        voteData.channel = channel.id
         voteData.timer = { end: dateUnix }
         const messages = await discordService.getVoteMessages(voteData, this.client)
-        await channel.send(messages.intro)
-        await channel.send(messages.optionHeader)
-        for (const [id, embed] of Object.entries(messages.options)) {
-            const optionMessage = await channel.send(embed)
+        await channel.send(messages.intro.content, messages.intro.options)
+        for (const [id, option] of Object.entries(messages.options)) {
+            const optionMessage = await channel.send(option.content, option.options)
             optionMessage.react('✏️')
             voteData.options[id].message = optionMessage.id
         }
-        await channel.send(messages.info)
-        const timerMessage = await channel.send(messages.timer)
+        await channel.send(messages.info.content, messages.info.options)
+        const timerMessage = await channel.send(messages.timer.content, messages.timer.options)
         voteData.timer.message = timerMessage.id
-        voteData.channel = channel.id
         guild.setData('vote', voteData)
-        guild.scheduleJob('timerJob', ' */3 * * * *', () => timerJob(voteData, guild))
+        guild.scheduleJob('saveVoteJob', ' */2 * * * *', () => saveVoteJob(voteData, guild))
+        guild.scheduleJob('updateTimerJob', ' */2 * * * *', () => updateTimerJob(voteData, guild))
         message.reply(`Posted the vote in ${channel}!`)
     }
 }

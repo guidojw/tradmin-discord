@@ -16,6 +16,7 @@ module.exports = class StartVoteCommand extends Command {
     async execute (message, _args, guild) {
         const voteData = guild.getData('vote')
         if (!voteData) return message.reply('There is no created vote!')
+
         const choice = await discordService.prompt(message.channel, message.author, await message.reply('Are you sure' +
             ' you would like to delete the created vote?'))
         if (choice) {

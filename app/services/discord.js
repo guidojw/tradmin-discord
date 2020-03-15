@@ -1,5 +1,5 @@
 'use strict'
-const { MessageEmbed } = require('discord.js')
+const { MessageEmbed, MessageAttachment } = require('discord.js')
 const timeHelper = require('../helpers/time')
 
 exports.isAdmin = (member, adminRoles) => {
@@ -27,26 +27,35 @@ exports.prompt = async (channel, author, message) => {
 
 exports.getVoteMessages = async (voteData, client) => {
     const messages = { options: {} }
-    messages.intro = `**${voteData.title}**\n\n${voteData.description}`
-    messages.optionHeader = '👥 **Participants:**'
+    messages.intro = {
+        content: `**${voteData.title}**\n${voteData.description}`,
+        options: voteData.image ? new MessageAttachment(voteData.image) : undefined
+    }
+    let first = true
     for (const [id, option] of Object.entries(voteData.options)) {
         const user = client.users.cache.get(id)
         if (user) {
-            const embed = new MessageEmbed()
-                .setTitle(user.tag)
-                .setThumbnail(user.displayAvatarURL())
-                .setDescription(option.description)
-                .setFooter('Votes: 0')
-                .setColor(user.displayColor)
-            messages.options[id] = embed
+            messages.options[id] = {
+                content: first ? '👥 **Participants**' : undefined,
+                options: new MessageEmbed()
+                    .setTitle(user.tag)
+                    .setThumbnail(user.displayAvatarURL())
+                    .setDescription(option.description)
+                    .setFooter('Votes: 0')
+                    .setColor(user.displayColor)
+            }
+            first = false
         }
     }
-    const embed = new MessageEmbed()
-        .setFooter('You can make your vote by clicking on the reactions underneath the options below.\nOnly your' +
-            ' first vote will count and removing your reaction will not remove your vote.\nEnds at')
-        .setTimestamp(voteData.end || new Date().getTime())
-    messages.info = embed
-    messages.timer = `🕐️ *${timeHelper.getDurationString(voteData.timer ? voteData.timer.end - new Date()
+    messages.info = {
+        options: new MessageEmbed()
+            .setFooter('You can vote by reacting the pencil on the participant you want to vote on.\nOnly your first' +
+                ' vote will count and removing your reaction will not remove your vote.\nEnds at')
+            .setTimestamp(voteData.end || new Date().getTime())
+    }
+    messages.timer = {
+        content: `🕰️ *${timeHelper.getDurationString(voteData.timer ? voteData.timer.end - new Date()
         .getTime() : 0)}* left to vote!`
+    }
     return messages
 }
