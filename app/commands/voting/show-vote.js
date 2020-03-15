@@ -2,7 +2,7 @@
 const Command = require('../../controllers/command')
 const discordService = require('../../services/discord')
 
-module.exports = class StartVoteCommand extends Command {
+module.exports = class ShowVoteCommand extends Command {
     constructor (client) {
         super(client, {
             group: 'voting',

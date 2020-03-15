@@ -2,7 +2,7 @@
 const Command = require('../../controllers/command')
 const discordService = require('../../services/discord')
 
-module.exports = class StartVoteCommand extends Command {
+module.exports = class DeleteVoteCommand extends Command {
     constructor (client) {
         super(client, {
             group: 'voting',
@@ -20,7 +20,7 @@ module.exports = class StartVoteCommand extends Command {
             ' yet.')
         const choice = await discordService.prompt(message.channel, message.author, await message.reply('Are you sure' +
             ' you would like to delete the created vote?\n**You won\'t be able to use the results and showvote ' +
-            ' commands anymore.**'))
+            ' commands anymore!**'))
         if (choice) {
             guild.setData('vote', undefined)
             message.reply('Deleted vote.')
