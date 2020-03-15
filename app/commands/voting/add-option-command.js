@@ -24,11 +24,13 @@ module.exports = class AddOptionCommand extends Command {
 
     execute (message, { user, description }, guild) {
         const voteData = guild.getData('vote')
-        if (!voteData) return message.reply('There is no vote created yet!')
-        if (user.id in voteData.options) return message.reply('User is already an option!')
-        if (voteData.options.length >= 10) return message.reply('A vote cannot have more than 10 options!')
+        if (!voteData) return message.reply('There is no vote created yet.')
+        if (voteData.timer) return message.reply('The vote has already been started.')
+        if (user.id in voteData.options) return message.reply('User is already an option.')
+        if (voteData.options.length >= 10) return message.reply('A vote cannot have more than 10 options.')
+
         voteData.options[user.id] = { description: description, votes: [] }
         guild.setData('vote', voteData)
-        message.reply('Added option!')
+        message.reply('Added option.')
     }
 }

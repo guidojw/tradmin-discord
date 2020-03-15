@@ -15,15 +15,16 @@ module.exports = class StartVoteCommand extends Command {
 
     async execute (message, _args, guild) {
         const voteData = guild.getData('vote')
-        if (!voteData) return message.reply('There is no created vote!')
-
+        if (!voteData) return message.reply('There is no created vote.')
+        if (voteData.timer && voteData.timer.end > new Date().getTime()) return message.reply('The vote hasn\'t ended' +
+            ' yet.')
         const choice = await discordService.prompt(message.channel, message.author, await message.reply('Are you sure' +
             ' you would like to delete the created vote?'))
         if (choice) {
             guild.setData('vote', undefined)
-            message.reply('Deleted vote!')
+            message.reply('Deleted vote.')
         } else {
-            message.reply('Did not delete vote!')
+            message.reply('Did not delete vote.')
         }
     }
 }

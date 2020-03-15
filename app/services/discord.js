@@ -55,7 +55,7 @@ exports.getVoteMessages = async (voteData, client) => {
     }
     messages.timer = {
         content: `🕰️ *${timeHelper.getDurationString(voteData.timer ? voteData.timer.end - new Date()
-        .getTime() : 0)}* left to vote!`
+            .getTime() : 0)}* left to vote!`
     }
     return messages
 }

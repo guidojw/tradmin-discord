@@ -34,15 +34,15 @@ module.exports = class StartVoteCommand extends Command {
 
     async execute (message, { channel, date, time }, guild) {
         const voteData = guild.getData('vote')
-        if (!voteData) return message.reply('There is no vote created yet, create one using the createvote command!')
-        if (voteData.timer) return message.reply('The vote is already started!')
+        if (!voteData) return message.reply('There is no vote created yet, create one using the createvote command.')
+        if (voteData.timer) return message.reply('The vote has already started.')
         const dateInfo = timeHelper.getDateInfo(date)
         const timeInfo = timeHelper.getTimeInfo(time)
         const dateUnix = new Date(dateInfo.year, dateInfo.month - 1, dateInfo.day, timeInfo.hours, timeInfo
             .minutes).getTime()
         const nowUnix = new Date().getTime()
         const afterNow = dateUnix - nowUnix > 0
-        if (!afterNow) return message.reply('Please give a date and time that are after now!')
+        if (!afterNow) return message.reply('Please give a date and time that are after now.')
 
         voteData.channel = channel.id
         voteData.timer = { end: dateUnix }
@@ -59,6 +59,6 @@ module.exports = class StartVoteCommand extends Command {
         guild.setData('vote', voteData)
         guild.scheduleJob('saveVoteJob', ' */2 * * * *', () => saveVoteJob(voteData, guild))
         guild.scheduleJob('updateTimerJob', ' */2 * * * *', () => updateTimerJob(voteData, guild))
-        message.reply(`Posted the vote in ${channel}!`)
+        message.reply(`Posted the vote in ${channel}.`)
     }
 }

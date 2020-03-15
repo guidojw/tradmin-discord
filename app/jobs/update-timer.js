@@ -10,7 +10,7 @@ module.exports = async (voteData, guild) => {
     if (voteData.timer.end > now) {
         message.edit(`🕰️️ *${timeHelper.getDurationString(voteData.timer.end - now)}* left to vote!`)
     } else {
-        message.edit('🕰️️ **This vote is closed!**')
+        message.edit('🕰️️ **This vote has closed!**')
         guild.stopJob('updateTimerJob')
     }
 }
