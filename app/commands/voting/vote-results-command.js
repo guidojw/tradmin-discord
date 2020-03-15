@@ -3,7 +3,7 @@ const Command = require('../../controllers/command')
 const { MessageEmbed } = require('discord.js')
 const pluralize = require('pluralize')
 
-module.exports = class ResultsCommand extends Command {
+module.exports = class VoteResultsCommand extends Command {
     constructor (client) {
         super(client, {
             group: 'voting',
