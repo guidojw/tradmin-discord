@@ -1,6 +1,6 @@
 'use strict'
-module.exports = async (voteData, guild) => {
-    const now = new Date().getTime()
+module.exports = async guild => {
+    const voteData = guild.getData('vote')
     guild.setData('vote', voteData)
-    if (voteData.timer.end <= now) guild.stopJob('saveVoteJob')
+    if (voteData.timer.end <= new Date().getTime()) guild.stopJob('saveVoteJob')
 }

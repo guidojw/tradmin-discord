@@ -1,7 +1,8 @@
 'use strict'
 const timeHelper = require('../helpers/time')
 
-module.exports = async (voteData, guild) => {
+module.exports = async guild => {
+    const voteData = guild.getData('vote')
     const channel = guild.guild.channels.cache.get(voteData.channel)
     if (!channel) throw new Error('Cannot get channel.')
     const message = await channel.messages.fetch(voteData.timer.message)

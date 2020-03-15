@@ -40,9 +40,8 @@ module.exports = class Guild {
     init () {
         const voteData = this.getData('vote')
         if (voteData && voteData.timer && voteData.timer.end > new Date().getTime()) {
-            this.scheduleJob('saveVoteJob', '*/2 * * * *', () => saveVoteJob(voteData, this))
-            this.scheduleJob('updateTimerJob', '*/2 * * * *', () => updateTimerJob(voteData,
-                this))
+            this.scheduleJob('saveVoteJob', '*/2 * * * *', () => saveVoteJob(this))
+            this.scheduleJob('updateTimerJob', '*/2 * * * *', () => updateTimerJob(this))
         }
     }
 
