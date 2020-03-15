@@ -30,13 +30,13 @@ module.exports = class VoteResultsCommand extends Command {
         scores.sort((a, b) => {
             return b.votes - a.votes
         })
-        let rank = 1
+        let rank = 0
         let lastScore = undefined
         for (const score of scores) {
-            const user = this.client.users.cache.get(score.id)
-            embed.addField(`${rank}. ${user.tag}`, `${score.votes} ${pluralize('vote', score.votes)}`)
             if (score.votes !== lastScore) rank++
             lastScore = score.votes
+            const user = this.client.users.cache.get(score.id)
+            embed.addField(`${rank}. ${user.tag}`, `${score.votes} ${pluralize('vote', score.votes)}`)
         }
         message.replyEmbed(embed)
     }
