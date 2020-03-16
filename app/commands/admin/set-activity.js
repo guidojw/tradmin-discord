@@ -13,7 +13,7 @@ module.exports = class SetActivityCommand extends Command {
             aliases: ['activity'],
             description: 'Sets the current activity of the bot.',
             examples: ['activity playing "Roblox"', 'activity streaming "Game Development" https://twitch.tv/guidojw'],
-            clientPermissions: ['MANAGE_MESSAGES', 'ADD_REACTIONS', 'SEND_MESSAGES'],
+            clientPermissions: ['MANAGE_MESSAGES', 'SEND_MESSAGES'],
             args: [
                 {
                     key: 'type',
