@@ -12,9 +12,10 @@ module.exports = class MapCommand extends Command {
         })
     }
 
-    execute (message) {
-        message.reply(new MessageAttachment('https://media.discordapp.net/attachments/508612034284355594/6' +
-            '79474511506178106/1.png?width=902&height=902'))
+    execute (message, _args, guild) {
+        const images = guild.getData('images')
+        if (!images.map) return message.reply('Couldn\'t find image.')
+        message.reply(new MessageAttachment(images.map))
     }
 }
 
