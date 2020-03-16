@@ -96,7 +96,7 @@ module.exports = class Bot {
         }
 
         const voteData = guild.getData('vote')
-        if (voteData && voteData.timer && voteData.timer.end > new Date().getTime()) {
+        if (voteData && voteData.timer && voteData.timer.end > Date.now()) {
             let choice
             for (const option of Object.values(voteData.options)) {
                 if (option.votes.includes(member.id)) return

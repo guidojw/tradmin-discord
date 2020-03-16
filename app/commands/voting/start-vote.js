@@ -38,8 +38,7 @@ module.exports = class StartVoteCommand extends Command {
         const timeInfo = timeHelper.getTimeInfo(time)
         const dateUnix = new Date(dateInfo.year, dateInfo.month - 1, dateInfo.day, timeInfo.hours, timeInfo
             .minutes).getTime()
-        const nowUnix = new Date().getTime()
-        const afterNow = dateUnix - nowUnix > 0
+        const afterNow = dateUnix - Date.now() > 0
         if (!afterNow) return message.reply('Please give a date and time that are after now.')
 
         voteData.channel = channel.id

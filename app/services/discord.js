@@ -52,7 +52,7 @@ exports.getVoteMessages = async (voteData, client) => {
                 'first vote will count and removing your reaction will not remove your vote.\nEnds at')
             // The showvote command can call this with voteData that has no timer set yet so fake a timestamp with
             // the current time.
-            .setTimestamp(voteData.timer.end || new Date().getTime())
+            .setTimestamp(voteData.timer.end || Date.now())
     }
     messages.timer = {
         content: `🕰️ *${timeHelper.getDurationString(voteData.timer ? voteData.timer.end - new Date()
