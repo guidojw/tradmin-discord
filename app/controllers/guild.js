@@ -39,7 +39,7 @@ module.exports = class Guild {
 
     init () {
         const voteData = this.getData('vote')
-        if (voteData && voteData.timer && voteData.timer.end > new Date().getTime()) {
+        if (voteData && voteData.timer && voteData.timer.end > Date.now()) {
             this.scheduleJob('saveVoteJob')
             this.scheduleJob('updateTimerJob')
         }

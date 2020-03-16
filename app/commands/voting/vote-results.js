@@ -18,7 +18,7 @@ module.exports = class VoteResultsCommand extends Command {
         const voteData = guild.getData('vote')
         if (!voteData) return message.reply('There\'s no vote created yet, create one using the createvote command.')
         if (!voteData.timer) return message.reply('The vote hasn\'t started yet.')
-        if (voteData.timer && voteData.timer.end > new Date().getTime()) return message.reply('The vote hasn\'t ended' +
+        if (voteData.timer && voteData.timer.end > Date.now()) return message.reply('The vote hasn\'t ended' +
             ' yet.')
 
         const embed = new MessageEmbed()
