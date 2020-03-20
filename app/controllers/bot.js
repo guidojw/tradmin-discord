@@ -46,6 +46,7 @@ module.exports = class Bot {
         this.client.on('messageReactionAdd', this.messageReactionAdd.bind(this))
         this.client.on('messageReactionRemove', this.messageReactionRemove.bind(this))
         this.client.on('commandRun', this.commandRun.bind(this))
+        this.client.on('message', this.message.bind(this))
 
         this.client.login(process.env.DISCORD_TOKEN)
     }
@@ -136,5 +137,17 @@ module.exports = class Bot {
                 ${message.content}`)
         const guild = this.guilds[message.guild.id]
         guild.guild.channels.cache.get(guild.getData('channels').logsChannel).send(embed)
+    }
+
+    async message (message) {
+        if (message.partial) await message.fetch()
+        if (!message.guild) return
+        const guild = this.guilds[message.guild.id]
+        const channels = guild.getData('channels')
+        if (message.channel.id === channels.gameScreenshotsChannel) {
+            if (message.attachments.size === 0) {
+                message.delete()
+            }
+        }
     }
 }
