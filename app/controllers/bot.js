@@ -87,12 +87,13 @@ module.exports = class Bot {
         const guild = this.guilds[reaction.message.guild.id]
         const member = guild.guild.member(user)
 
-        const messages = guild.getData('messages')
-        const emojis = guild.getData('emojis')
-        const roles = guild.getData('roles')
-        if (reaction.message.id === messages.suggestionsMessage && reaction.emoji.id === emojis.roleEmoji) {
-            if (member) member.roles.add(roles.suggestionsRole)
-            return
+        const roleMessages = guild.getData('roleMessages')
+        const roleMessage = roleMessages[reaction.message.id]
+        if (roleMessage) {
+            const emoji = reaction.emoji.id || reaction.emoji.name
+            for (const binding of roleMessage) {
+                if (binding.emoji === emoji) return member.roles.add(binding.role)
+            }
         }
 
         const voteData = guild.getData('vote')
@@ -113,10 +114,15 @@ module.exports = class Bot {
         if (user.partial) await user.fetch()
         if (user.bot) return
         const guild = this.guilds[reaction.message.guild.id]
-        if (reaction.message.id === guild.getData('messages').suggestionsMessage && reaction.emoji.id === guild
-            .getData('emojis').roleEmoji) {
-            const member = guild.guild.member(user)
-            if (member) member.roles.remove(guild.getData('roles').suggestionsRole)
+        const member = guild.guild.member(user)
+
+        const roleMessages = guild.getData('roleMessages')
+        const roleMessage = roleMessages[reaction.message.id]
+        if (roleMessage) {
+            const emoji = reaction.emoji.id || reaction.emoji.name
+            for (const binding of roleMessage) {
+                if (binding.emoji === emoji) return member.roles.remove(binding.role)
+            }
         }
     }
 
