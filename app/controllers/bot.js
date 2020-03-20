@@ -145,8 +145,14 @@ module.exports = class Bot {
         const guild = this.guilds[message.guild.id]
         const channels = guild.getData('channels')
         if (message.channel.id === channels.gameScreenshotsChannel) {
-            if (message.attachments.size === 0) {
-                message.delete()
+            if (message.attachments.size === 0 && message.embeds.length === 0) {
+                await message.delete()
+                const channel = guild.guild.channels.cache.get(channels.logsChannel)
+                const embed = new MessageEmbed()
+                    .setAuthor(message.author.tag, message.author.displayAvatarURL())
+                    .setDescription(stripIndents`**Message sent by** ${message.author} **deleted in** ${message.channel}
+                        ${message.content}`)
+                channel.send(embed)
             }
         }
     }
