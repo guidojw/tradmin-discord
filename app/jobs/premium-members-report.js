@@ -5,7 +5,7 @@ const pluralize = require('pluralize')
 module.exports = async guild => {
     const members = await guild.guild.members.fetch()
     const premiumMembers = []
-    for (const member of members) {
+    for (const member of members.values()) {
         if (member.premiumSince) premiumMembers.push(member)
     }
 
