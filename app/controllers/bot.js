@@ -20,6 +20,7 @@ module.exports = class Bot {
             partials: ['MESSAGE', 'REACTION']
         })
         this.client.bot = this
+        this.currentActivity = 0
 
         this.client.registry
             .registerGroup('admin', 'Admin')
@@ -51,7 +52,12 @@ module.exports = class Bot {
     }
 
     setActivity (name, options) {
-        this.client.user.setActivity(name || applicationConfig.defaultActivity, options)
+        if (!name) {
+            const activity = this.getNextActivity()
+            name = activity.name
+            options = activity.options
+        }
+        this.client.user.setActivity(name, options)
     }
 
     async ready () {
@@ -65,6 +71,7 @@ module.exports = class Bot {
             'users.')
 
         this.setActivity()
+        setInterval(() => this.setActivity(), 60 * 1000)
     }
 
     async guildMemberAdd (member) {
@@ -157,5 +164,22 @@ module.exports = class Bot {
 
     getGuild (id) {
         return this.guilds[id]
+    }
+
+    getNextActivity () {
+        this.currentActivity++
+        if (this.currentActivity === 3) this.currentActivity = 0
+        switch (this.currentActivity) {
+            case 0:
+                return { name: `${this.client.commandPrefix}help`, options: { type: 'LISTENING' }}
+            case 1:
+                return { name: 'Terminal Railways', options: { type: 'PLAYING' }}
+            case 2:
+                let totalMemberCount = 0
+                for (const guild of Object.values(this.guilds)) {
+                    totalMemberCount += guild.guild.memberCount
+                }
+                return { name: `${totalMemberCount} users`, options: { type: 'WATCHING' }}
+        }
     }
 }
