@@ -174,12 +174,13 @@ module.exports = class Bot {
                 return { name: `${this.client.commandPrefix}help`, options: { type: 'LISTENING' }}
             case 1:
                 return { name: 'Terminal Railways', options: { type: 'PLAYING' }}
-            case 2:
+            case 2: {
                 let totalMemberCount = 0
                 for (const guild of Object.values(this.guilds)) {
                     totalMemberCount += guild.guild.memberCount
                 }
                 return { name: `${totalMemberCount} users`, options: { type: 'WATCHING' }}
+             }
         }
     }
 }

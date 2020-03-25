@@ -45,6 +45,6 @@ module.exports = class AddRoleMessageCommand extends Command {
         }
         roleMessages[messageId].push({ role: role.id, emoji })
         guild.setData('roleMessages', roleMessages)
-        return message.reply('Successfully made role message!')
+        return message.reply('Successfully made role message.')
     }
 }
