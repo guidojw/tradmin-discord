@@ -26,7 +26,7 @@ module.exports = class SuggestCommand extends Command {
     }
 
     hasPermission (message) {
-        const guild = this.client.bot.guilds[message.guild.id]
+        const guild = this.client.bot.getGuild(message.guild.id)
         const roles = guild.getData('roles')
         if (message.member.roles.cache.has(roles.suggestionsBannedRole)) {
             return 'You are banned from using the delete command.'

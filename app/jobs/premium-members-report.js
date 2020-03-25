@@ -29,7 +29,6 @@ module.exports = async guild => {
         const embed = new MessageEmbed()
             .setTitle('Server Booster Report')
         for (const { member, months } of monthlyPremiumMembers) {
-            if (member.user.partial) await member.user.fetch()
             embed.addField(member.user.tag, `Has been boosting this server for **${months}** ${pluralize('month', 
                 months)}!`)
         }
