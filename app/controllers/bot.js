@@ -17,7 +17,7 @@ module.exports = class Bot {
             owner: applicationConfig.owner,
             unknownCommandResponse: false,
             disableEveryone: true,
-            partials: ['REACTION', 'MESSAGE', 'GUILD_MEMBER']
+            partials: ['MESSAGE', 'REACTION']
         })
         this.client.bot = this
         this.client.setProvider(new SettingProvider())
@@ -41,56 +41,53 @@ module.exports = class Bot {
 
         this.guilds = {}
 
-        this.client.once('ready', this.ready.bind(this))
         this.client.on('guildMemberAdd', this.guildMemberAdd.bind(this))
         this.client.on('messageReactionAdd', this.messageReactionAdd.bind(this))
         this.client.on('messageReactionRemove', this.messageReactionRemove.bind(this))
         this.client.on('commandRun', this.commandRun.bind(this))
         this.client.on('message', this.message.bind(this))
+        this.client.once('ready', this.ready.bind(this))
 
         this.client.login(process.env.DISCORD_TOKEN)
-    }
-
-    async fetch () {
-        for (const guildId of this.client.guilds.cache.keys()) {
-            this.guilds[guildId] = new Guild(this, guildId)
-            await this.guilds[guildId].loadData()
-            this.guilds[guildId].init()
-        }
     }
 
     setActivity (name, options) {
         this.client.user.setActivity(name || applicationConfig.defaultActivity, options)
     }
 
-    ready () {
-        this.fetch()
+    async ready () {
+        for (const guildId of this.client.guilds.cache.keys()) {
+            this.guilds[guildId] = new Guild(this, guildId)
+            await this.guilds[guildId].loadData()
+        }
+
         console.log(`Ready to serve on ${this.client.guilds.cache.size} servers, for ${this.client.users.cache.size} ` +
             'users.')
+
         this.setActivity()
     }
 
     async guildMemberAdd (member) {
-        if (member.partial) await member.fetch()
         if (member.user.bot) return
         const embed = new MessageEmbed()
             .setTitle(`Hey ${member.user.tag},`)
             .setDescription(`You're the **${member.guild.memberCount}th** member on **${member.guild.name}** 🎉 !`)
             .setThumbnail(member.user.displayAvatarURL())
-        const guild = this.guilds[member.guild.id]
+        const guild = this.getGuild(member.guild.id)
         guild.guild.channels.cache.get(guild.getData('channels').welcomeChannel).send(embed)
     }
 
     async messageReactionAdd (reaction, user) {
-        if (user.partial) await user.fetch()
         if (user.bot) return
-        if (reaction.partial) await reaction.fetch()
-        const guild = this.guilds[reaction.message.guild.id]
+        if (reaction.message.partial) await reaction.message.fetch()
+        if (!reaction.message.guild) return
+        const guild = this.getGuild(reaction.message.guild.id)
         const member = guild.guild.member(user)
 
         const roleMessages = guild.getData('roleMessages')
         const roleMessage = roleMessages[reaction.message.id]
         if (roleMessage) {
+            if (reaction.partial) await reaction.fetch()
             const emoji = reaction.emoji.id || reaction.emoji.name
             for (const binding of roleMessage) {
                 if (binding.emoji === emoji) return member.roles.add(binding.role)
@@ -112,9 +109,10 @@ module.exports = class Bot {
     }
 
     async messageReactionRemove (reaction, user) {
-        if (user.partial) await user.fetch()
         if (user.bot) return
-        const guild = this.guilds[reaction.message.guild.id]
+        if (reaction.message.partial) await reaction.message.fetch()
+        if (!reaction.message.guild) return
+        const guild = this.getGuild(reaction.message.guild.id)
         const member = guild.guild.member(user)
 
         const roleMessages = guild.getData('roleMessages')
@@ -135,18 +133,18 @@ module.exports = class Bot {
             .setDescription(stripIndents`${message.author} **used** \`${command.name}\` **command in** ${message
                 .channel} [Jump to Message](${message.url})
                 ${message.content}`)
-        const guild = this.guilds[message.guild.id]
+        const guild = this.getGuild(message.guild.id)
         guild.guild.channels.cache.get(guild.getData('channels').logsChannel).send(embed)
     }
 
     async message (message) {
-        if (message.partial) await message.fetch()
-        if (!message.guild) return
-        const guild = this.guilds[message.guild.id]
-        const channels = guild.getData('channels')
-        if (message.channel.id === channels.gameScreenshotsChannel) {
+        if (!message.guild || message.author.bot) return
+        const guild = this.getGuild(message.guild.id)
+        const noTextChannels = guild.getData('noTextChannels')
+        if (noTextChannels.includes(message.channel.id)) {
             if (message.attachments.size === 0 && message.embeds.length === 0) {
                 await message.delete()
+                const channels = guild.getData('channels')
                 const channel = guild.guild.channels.cache.get(channels.logsChannel)
                 const embed = new MessageEmbed()
                     .setAuthor(message.author.tag, message.author.displayAvatarURL())
@@ -155,5 +153,9 @@ module.exports = class Bot {
                 channel.send(embed)
             }
         }
+    }
+
+    getGuild (id) {
+        return this.guilds[id]
     }
 }

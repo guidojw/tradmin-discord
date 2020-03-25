@@ -9,11 +9,11 @@ module.exports = class SettingProvider {
     }
 
     async setSettings (guild, settings) {
-        await this.bot.guilds[guild.id].setData('settings', settings)
+        await this.bot.getGuild(guild.id).setData('settings', settings)
     }
 
     async getSettings (guild) {
-        return this.bot.guilds[guild.id].getData('settings') || {}
+        return this.bot.getGuild(guild.id).getData('settings') || {}
     }
 
     async set (guild, key, val) {
