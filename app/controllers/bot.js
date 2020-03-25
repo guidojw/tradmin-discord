@@ -20,7 +20,6 @@ module.exports = class Bot {
             partials: ['MESSAGE', 'REACTION']
         })
         this.client.bot = this
-        this.client.setProvider(new SettingProvider())
 
         this.client.registry
             .registerGroup('admin', 'Admin')
@@ -60,6 +59,7 @@ module.exports = class Bot {
             this.guilds[guildId] = new Guild(this, guildId)
             await this.guilds[guildId].loadData()
         }
+        this.client.setProvider(new SettingProvider())
 
         console.log(`Ready to serve on ${this.client.guilds.cache.size} servers, for ${this.client.users.cache.size} ` +
             'users.')
