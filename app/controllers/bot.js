@@ -147,11 +147,12 @@ module.exports = class Bot {
     async message (message) {
         if (!message.guild || message.author.bot) return
         const guild = this.getGuild(message.guild.id)
+        const channels = guild.getData('channels')
+
         const noTextChannels = guild.getData('noTextChannels')
         if (noTextChannels.includes(message.channel.id)) {
             if (message.attachments.size === 0 && message.embeds.length === 0) {
                 await message.delete()
-                const channels = guild.getData('channels')
                 const channel = guild.guild.channels.cache.get(channels.logsChannel)
                 const embed = new MessageEmbed()
                     .setAuthor(message.author.tag, message.author.displayAvatarURL())
@@ -159,6 +160,10 @@ module.exports = class Bot {
                         ${message.content}`)
                 channel.send(embed)
             }
+        }
+
+        if (message.channel.id === channels.photoContestChannel) {
+            if (message.attachments.size > 0 || message.embeds.length > 0) message.react('👍')
         }
     }
 
