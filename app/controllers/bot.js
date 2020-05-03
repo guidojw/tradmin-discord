@@ -7,6 +7,7 @@ const Commando = require('discord.js-commando')
 const { MessageEmbed } = require('discord.js')
 const SettingProvider = require('./setting-provider')
 const { stripIndents } = require('common-tags')
+const discordService = require('../services/discord')
 
 const applicationConfig = require('../../config/application')
 
@@ -149,16 +150,19 @@ module.exports = class Bot {
         const guild = this.getGuild(message.guild.id)
         const channels = guild.getData('channels')
 
-        const noTextChannels = guild.getData('noTextChannels')
-        if (noTextChannels.includes(message.channel.id)) {
-            if (message.attachments.size === 0 && message.embeds.length === 0) {
-                await message.delete()
-                const channel = guild.guild.channels.cache.get(channels.logsChannel)
-                const embed = new MessageEmbed()
-                    .setAuthor(message.author.tag, message.author.displayAvatarURL())
-                    .setDescription(stripIndents`**Message sent by** ${message.author} **deleted in** ${message.channel}
-                        ${message.content}`)
-                channel.send(embed)
+        if (!discordService.isAdmin(message.member, guild.getData('adminRoles'))) {
+            const noTextChannels = guild.getData('noTextChannels')
+            if (noTextChannels.includes(message.channel.id)) {
+                if (message.attachments.size === 0 && message.embeds.length === 0) {
+                    await message.delete()
+                    const channel = guild.guild.channels.cache.get(channels.logsChannel)
+                    const embed = new MessageEmbed()
+                        .setAuthor(message.author.tag, message.author.displayAvatarURL())
+                        .setDescription(stripIndents`**Message sent by** ${message.author} **deleted in** ${message
+                            .channel}
+                            ${message.content}`)
+                    channel.send(embed)
+                }
             }
         }
 
