@@ -1,8 +1,7 @@
 'use strict'
-const urlExpression = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/gi
-const urlRegex = new RegExp(urlExpression)
+const { getUrls } = require('./string')
 
-exports.validUrl = url => {
-    const matches = url.match(urlRegex)
-    return matches !== null && matches[0].length === url.length
+exports.validUrl = val => {
+    const matches = getUrls(val)
+    return matches && matches[0].length === val.length
 }
