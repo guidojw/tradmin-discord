@@ -3,6 +3,8 @@ const Command = require('../../controllers/command')
 const { MessageEmbed } = require('discord.js')
 const { getDurationString } = require('../../helpers/time')
 
+const applicationConfig = require('../../../config/application')
+
 module.exports = class UptimeCommand extends Command {
     constructor (client) {
         super(client, {
@@ -16,6 +18,7 @@ module.exports = class UptimeCommand extends Command {
     execute (message) {
         const embed = new MessageEmbed()
             .addField('TRadmin has been online for', getDurationString(this.client.uptime))
+            .setColor(applicationConfig.primaryColor)
         message.replyEmbed(embed)
     }
 }
