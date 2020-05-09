@@ -1,6 +1,6 @@
 'use strict'
 const Command = require('../../controllers/command')
-const urlHelper = require('../../helpers/url')
+const { validUrl } = require('../../helpers/url')
 
 module.exports = class SetMapCommand extends Command {
     constructor(client) {
@@ -14,7 +14,7 @@ module.exports = class SetMapCommand extends Command {
                     key: 'url',
                     prompt: 'What url would you like to set the map image to?',
                     type: 'string',
-                    validate: urlHelper.validUrl
+                    validate: validUrl
                 }
             ]
         })

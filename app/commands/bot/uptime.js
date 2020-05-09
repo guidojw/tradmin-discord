@@ -1,6 +1,7 @@
 'use strict'
 const Command = require('../../controllers/command')
 const { MessageEmbed } = require('discord.js')
+const { getDurationString } = require('../../helpers/time')
 
 module.exports = class UptimeCommand extends Command {
     constructor (client) {
@@ -14,7 +15,7 @@ module.exports = class UptimeCommand extends Command {
 
     execute (message) {
         const embed = new MessageEmbed()
-        embed.addField('TRadmin has been online for', `${Math.round(this.client.uptime / 1000)}s`)
+            .addField('TRadmin has been online for', getDurationString(this.client.uptime))
         message.replyEmbed(embed)
     }
 }

@@ -191,7 +191,7 @@ module.exports = class Bot {
                     totalMemberCount += guild.guild.memberCount
                 }
                 return { name: `${totalMemberCount} users`, options: { type: 'WATCHING' }}
-             }
+            }
         }
     }
 }
