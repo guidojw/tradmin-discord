@@ -2,6 +2,8 @@
 const { MessageEmbed, MessageAttachment } = require('discord.js')
 const timeHelper = require('../helpers/time')
 
+const REACTION_COLLECTOR_TIMEOUT = 60000
+
 exports.isAdmin = (member, adminRoles) => {
     for (const roleId of adminRoles) {
         if (member.roles.cache.has(roleId)) return true
@@ -9,19 +11,19 @@ exports.isAdmin = (member, adminRoles) => {
     return false
 }
 
-exports.prompt = async (channel, author, message) => {
-    const filter = (reaction, user) => (reaction.emoji.name === '✅' || reaction.emoji.name === '🚫') && user.id ===
-        author.id
-    const collector = message.createReactionCollector(filter, { time: 60000 })
+exports.prompt = async (channel, author, message, options) => {
+    const filter = (reaction, user) => options.includes(reaction.emoji.name) && user.id === author.id
+    const collector = message.createReactionCollector(filter, { time: REACTION_COLLECTOR_TIMEOUT })
     const promise = new Promise(resolve => {
         collector.on('end', collected => {
             const reaction = collected.first()
-            resolve(reaction && reaction.emoji.name === '✅')
+            resolve(reaction ? reaction.emoji.name : null)
         })
     })
     collector.on('collect', collector.stop)
-    await message.react('✅')
-    await message.react('🚫')
+    for (const option of options) {
+        await message.react(option)
+    }
     return promise
 }
 
