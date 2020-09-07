@@ -26,6 +26,8 @@ const TicketType = {
     PRIZE_CLAIM: 'prizeClaim'
 }
 
+const SUBMISSION_TIME = 30 * 60 * 1000 // time after which an unsubmitted ticket will be closed
+
 class TicketController extends EventEmitter {
     constructor (ticketsController, client, type, author) {
         super()
@@ -129,6 +131,10 @@ class TicketController extends EventEmitter {
                 `)
         await this.channel.send(summariseEmbed)
 
+        // Initialise the submission timeout after which the ticket will
+        // be closed if nothing was submitted
+        this.timeout = setTimeout(this.close.bind(this, 'Timeout: ticket closed'), SUBMISSION_TIME)
+
         this.state = TicketState.SUBMITTING_REPORT
     }
 
@@ -138,6 +144,9 @@ class TicketController extends EventEmitter {
         if (this.type === TicketType.DATA_LOSS && (this.state === TicketState.REQUESTING_REPORT || this.state ===
             TicketState.SUBMITTING_REPORT)
             || this.type === TicketType.PRIZE_CLAIM && this.state === TicketState.CREATING_CHANNEL) {
+
+            // Clear the submission timeout initialised in requestReport
+            clearTimeout(this.timeout)
 
             // Log the action
             await this.client.bot.log(this.author,
