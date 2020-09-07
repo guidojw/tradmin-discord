@@ -125,8 +125,8 @@ class TicketController extends EventEmitter {
             .setColor(applicationConfig.primaryColor)
             .setAuthor(this.client.user.username, this.client.user.displayAvatarURL())
             .setTitle('Please summarise your report')
-            .setDescription(stripIndents
-                `You may use several messages and attach pictures/videos.
+            .setDescription(stripIndents`
+                You may use several messages and attach pictures/videos.
                 Use the command \`/submitreport\` once you're done or \`/closeticket\` to close your ticket.
                 `)
         await this.channel.send(summariseEmbed)
