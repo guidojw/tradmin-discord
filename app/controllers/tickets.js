@@ -141,7 +141,7 @@ module.exports = class TicketsController {
         const guild = this.client.bot.getGuild(message.guild.id)
         const channels = guild.getData('channels')
         if (message.channel.parentID !== channels.ticketsCategory) {
-            return message.reply('This command can only be used in channels in the tickets category.')
+            return
         }
 
         // Get the channel's TicketController
