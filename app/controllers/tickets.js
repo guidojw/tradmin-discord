@@ -84,8 +84,8 @@ module.exports = class TicketsController {
 
             // If author doesn't have a open ticket yet and can create a ticket
             if (!ticketController && !this.debounces[user.id]) {
-                // Set a timeout of 60 seconds after which the bot
-                // will automatically cancel the ticket
+                // Set a timeout of 60 seconds in which the bot
+                // will not react to message reactions.
                 this.debounces[user.id] = true
                 const timeout = setTimeout(this.clearAuthor.bind(this, user), TICKETS_INTERVAL)
 
