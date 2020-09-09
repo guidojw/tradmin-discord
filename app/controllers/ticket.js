@@ -1,6 +1,6 @@
 'use strict'
 const EventEmitter = require('events')
-const { MessageEmbed } = require('discord.js')
+const { MessageEmbed, DiscordAPIError } = require('discord.js')
 const discordService = require('../services/discord')
 const { stripIndents } = require('common-tags')
 const short = require('short-uuid')
@@ -190,7 +190,7 @@ class TicketController extends EventEmitter {
                 .setColor(color ? color : success ? 0x00ff00 : 0xff0000)
                 .setAuthor(this.client.user.username, this.client.user.displayAvatarURL())
                 .setTitle(message)
-            await this.author.send(embed)
+            await this.sendAuthor(embed)
 
             // Request for the ticket creator's rating if
             // the ticket was closed successfully
@@ -208,12 +208,25 @@ class TicketController extends EventEmitter {
                         .setColor(applicationConfig.primaryColor)
                         .setAuthor(this.client.user.username, this.client.user.displayAvatarURL())
                         .setTitle('No rating submitted')
-                    await this.author.send(successEmbed)
+                    await this.sendAuthor(successEmbed)
                 }
             }
         }
 
         this.emit('close')
+    }
+
+    async sendAuthor (content) {
+        try {
+            return await this.author.send(content)
+        } catch (err) {
+            if (err instanceof DiscordAPIError) {
+                // Most likely because the author has DMs closed,
+                // do nothing
+            } else {
+                throw err
+            }
+        }
     }
 
     async requestRating () {
@@ -224,7 +237,7 @@ class TicketController extends EventEmitter {
             .setColor(applicationConfig.primaryColor)
             .setAuthor(this.client.user.username, this.client.user.displayAvatarURL())
             .setTitle('How would you rate the support you got?')
-        const message = await this.author.send(embed)
+        const message = await this.sendAuthor(embed)
 
         // Prompt how the user rates their support
         const options = []
@@ -273,7 +286,7 @@ class TicketController extends EventEmitter {
             .setAuthor(this.client.user.username, this.client.user.displayAvatarURL())
             .setTitle('Rating submitted')
             .setDescription('Thank you!')
-        return this.author.send(successEmbed)
+        return this.sendAuthor(successEmbed)
     }
 
     static getTypeFromName (name) {
