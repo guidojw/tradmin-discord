@@ -114,14 +114,14 @@ class TicketController extends EventEmitter {
                 Start time: ${readableDate + ' ' + readableTime}
                 `)
             .setFooter(`Ticket ID: ${this.id}`)
-        await this.channel.send(embed)
+        await this.channel.send(`${this.author}`, { embed })
     }
 
     async requestReport () {
         this.state = TicketState.REQUESTING_REPORT
 
         // Ask for a summary of the report
-        const summariseEmbed = new MessageEmbed()
+        const embed = new MessageEmbed()
             .setColor(applicationConfig.primaryColor)
             .setAuthor(this.client.user.username, this.client.user.displayAvatarURL())
             .setTitle('Please summarise your report')
@@ -129,7 +129,7 @@ class TicketController extends EventEmitter {
                 You may use several messages and attach pictures/videos.
                 Use the command \`/submitreport\` once you're done or \`/closeticket\` to close your ticket.
                 `)
-        await this.channel.send(summariseEmbed)
+        await this.channel.send(embed)
 
         // Initialise the submission timeout after which the ticket will
         // be closed if nothing was submitted
