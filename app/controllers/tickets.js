@@ -40,7 +40,8 @@ module.exports = class TicketsController {
             ticketController.once('close', this.clearTicket.bind(this, ticketController, type))
         }
 
-        // Connect the message event for making new tickets
+        // Connect the message event for adding messages and moderators
+        // to open TicketControllers
         this.client.on('message', this.message.bind(this))
 
         // Connect the messageReactionAdd event for making new tickets
@@ -75,14 +76,14 @@ module.exports = class TicketsController {
             // Immediately remove the reaction
             await reaction.users.remove(user)
 
-            let ticketController = this.getTicketFromAuthor(message.author)
+            let ticketController = this.getTicketFromAuthor(user)
 
             // If author doesn't have a open ticket yet and can create a ticket
-            if (!ticketController && !this.debounces[message.author.id]) {
+            if (!ticketController && !this.debounces[user.id]) {
                 // Set a timeout of 60 seconds after which the bot
                 // will automatically cancel the ticket
-                this.debounces[message.author.id] = true
-                const timeout = setTimeout(this.clearAuthor.bind(this, message.author), TICKETS_INTERVAL)
+                this.debounces[user.id] = true
+                const timeout = setTimeout(this.clearAuthor.bind(this, user), TICKETS_INTERVAL)
 
                 // If the support system is offline, let the user know
                 if (!this.client.bot.mainGuild.getData('settings').supportEnabled) {
@@ -91,7 +92,7 @@ module.exports = class TicketsController {
                         .setAuthor(this.client.user.username, this.client.user.displayAvatarURL())
                         .setTitle('Welcome to Twin-Rail Support')
                         .setDescription('We are currently closed. Check the Twin-Rail server for more information.')
-                    return message.channel.send(embed)
+                    return user.send(embed)
                 }
 
                 // Check if the user is banned from making tickets
@@ -102,7 +103,7 @@ module.exports = class TicketsController {
                         .setColor(0xff0000)
                         .setTitle('Couldn\'t make ticket')
                         .setDescription('You\'re banned from making new tickets.')
-                    return message.author.send(banEmbed)
+                    return user.send(banEmbed)
                 }
 
                 clearTimeout(timeout)
@@ -118,7 +119,7 @@ module.exports = class TicketsController {
                     .setColor(0xff0000)
                     .setTitle('Couldn\'t make ticket')
                     .setDescription('You already have an open ticket.')
-                await message.author.send(banEmbed)
+                await user.send(banEmbed)
             }
         }
     }
