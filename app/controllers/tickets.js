@@ -69,8 +69,12 @@ module.exports = class TicketsController {
         }
 
         // If the reaction is one of the TicketTypes' assigned reactions
-        const type = reaction.emoji.name === discordService.getEmojiFromNumber(1) ? TicketType.DATA_LOSS :
-            reaction.emoji.name === discordService.getEmojiFromNumber(2) ? TicketType.PRIZE_CLAIM : undefined
+        /* eslint-disable indent */
+        const type = reaction.emoji.name === discordService.getEmojiFromNumber(1) ? TicketType.DATA_LOSS_REPORT
+            : reaction.emoji.name === discordService.getEmojiFromNumber(2) ? TicketType.PERSON_REPORT
+            : reaction.emoji.name === discordService.getEmojiFromNumber(3) ? TicketType.PRIZE_CLAIM
+            : undefined
+        /* eslint-enable indent */
         if (type) {
 
             // Immediately remove the reaction

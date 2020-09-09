@@ -22,7 +22,8 @@ const TicketState = {
 }
 
 const TicketType = {
-    DATA_LOSS: 'dataLoss',
+    DATA_LOSS_REPORT: 'dataLossReport',
+    PERSON_REPORT: 'personReport',
     PRIZE_CLAIM: 'prizeClaim'
 }
 
@@ -68,7 +69,7 @@ class TicketController extends EventEmitter {
         // Populate
         // If the ticket type is a data loss report,
         // ask the user for the actual report to be discussed
-        if (this.type === TicketType.DATA_LOSS) {
+        if (this.type === TicketType.DATA_LOSS_REPORT || this.type === TicketType.PERSON_REPORT) {
             await this.requestReport()
 
         // If the ticket type is a prize claim,
@@ -141,8 +142,8 @@ class TicketController extends EventEmitter {
     async submit () {
         // If the ticket author is currently entering a data loss report
         // or the ticket is a prize claim in creating channel state
-        if (this.type === TicketType.DATA_LOSS && (this.state === TicketState.REQUESTING_REPORT || this.state ===
-            TicketState.SUBMITTING_REPORT)
+        if ((this.type === TicketType.DATA_LOSS_REPORT || this.type === TicketType.PERSON_REPORT) && (this.state ===
+            TicketState.REQUESTING_REPORT || this.state === TicketState.SUBMITTING_REPORT)
             || this.type === TicketType.PRIZE_CLAIM && this.state === TicketState.CREATING_CHANNEL) {
 
             // Clear the submission timeout initialised in requestReport
