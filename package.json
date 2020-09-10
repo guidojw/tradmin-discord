@@ -17,14 +17,12 @@
   "license": "MIT",
   "dependencies": {
     "@sentry/node": "^5.22.3",
-    "axios": "^0.20.0",
     "common-tags": "^1.8.0",
     "discord.js": "^12.3.1",
     "discord.js-commando": "github:discordjs/Commando",
     "dotenv": "^8.2.0",
     "node-cron": "^2.0.3",
-    "pluralize": "^8.0.0",
-    "short-uuid": "^4.0.1"
+    "pluralize": "^8.0.0"
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
