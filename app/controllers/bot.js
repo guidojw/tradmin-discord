@@ -8,6 +8,7 @@ const { MessageEmbed } = require('discord.js')
 const SettingProvider = require('./setting-provider')
 const { stripIndents } = require('common-tags')
 const discordService = require('../services/discord')
+const TicketsController = require('./tickets')
 
 const applicationConfig = require('../../config/application')
 
@@ -28,6 +29,7 @@ module.exports = class Bot {
             .registerGroup('main', 'Main')
             .registerGroup('bot', 'Bot')
             .registerGroup('voting', 'Voting')
+            .registerGroup('tickets', 'Tickets')
             .registerDefaultGroups()
             .registerDefaultTypes()
             .registerDefaultCommands({
@@ -62,17 +64,30 @@ module.exports = class Bot {
     }
 
     async ready () {
+        // Instantiate a Guild instance for every guild
         for (const guildId of this.client.guilds.cache.keys()) {
             this.guilds[guildId] = new Guild(this, guildId)
             await this.guilds[guildId].loadData()
         }
-        this.client.setProvider(new SettingProvider())
+
+        // Set the bot's main Guild
+        const mainGuildId = process.env.NODE_ENV === 'production'
+            ? applicationConfig.productionMainGuildId
+            : applicationConfig.developmentMainGuildId
+        this.mainGuild = this.getGuild(mainGuildId)
+
+        // Set the client's SettingProvider
+        await this.client.setProvider(new SettingProvider())
+
+        // Instantiate the TicketsController for this bot
+        this.ticketsController = new TicketsController(this.client)
+
+        // Set the bot's activity and start the loop that updates the activity
+        this.setActivity()
+        setInterval(() => this.setActivity(), 60 * 1000)
 
         console.log(`Ready to serve on ${this.client.guilds.cache.size} servers, for ${this.client.users.cache.size} ` +
             'users.')
-
-        this.setActivity()
-        setInterval(() => this.setActivity(), 60 * 1000)
     }
 
     async guildMemberAdd (member) {
@@ -137,14 +152,11 @@ module.exports = class Bot {
     async commandRun (command, promise, message) {
         if (!message.guild) return
         await promise
-        const embed = new MessageEmbed()
-            .setAuthor(message.author.tag, message.author.displayAvatarURL())
-            .setDescription(stripIndents`${message.author} **used** \`${command.name}\` **command in** ${message
-                .channel} [Jump to Message](${message.url})
-                ${message.content}`)
-            .setColor(applicationConfig.primaryColor)
-        const guild = this.getGuild(message.guild.id)
-        guild.guild.channels.cache.get(guild.getData('channels').logsChannel).send(embed)
+
+        await this.log(message.author, stripIndents`
+            ${message.author} **used** \`${command.name}\` **command in** ${message.channel} [Jump to Message](${message.url})
+            ${message.content}
+            `)
     }
 
     async message (message) {
@@ -193,5 +205,19 @@ module.exports = class Bot {
                 return { name: `${totalMemberCount} users`, options: { type: 'WATCHING' }}
             }
         }
+    }
+
+    log (author, content, footer) {
+        const embed = new MessageEmbed()
+            .setAuthor(author.tag, author.displayAvatarURL())
+            .setDescription(content)
+            .setColor(applicationConfig.primaryColor)
+
+        if (footer) {
+            embed.setFooter(footer)
+        }
+
+        const guild = this.mainGuild
+        return guild.guild.channels.cache.get(guild.getData('channels').logsChannel).send(embed)
     }
 }

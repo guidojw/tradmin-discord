@@ -27,11 +27,15 @@ module.exports = class ClearCommand extends Command {
         const channels = guild.getData('channels')
         const suggestionsChannelId = channels.suggestionsChannel
         const bugReportsChannelId = channels.bugReportsChannel
+
         if (channel.id !== suggestionsChannelId && channel.id !== bugReportsChannelId) {
             return message.reply(`I can only clear <#${suggestionsChannelId}> or <#${bugReportsChannelId}>.`)
         }
-        const choice = await discordService.prompt(message.channel, message.author, await message.reply('Are you sure' +
-            `you sure you would like to clear ${channel}?`))
+
+        const prompt = await message.reply(`Are you sure you would like to clear ${channel}?`)
+        const choice = await discordService.prompt(message.channel, message.author, prompt, ['✅', '🚫']) ===
+            '✅'
+
         if (choice) {
             const guildMessages = guild.getData('messages')
             let messages
