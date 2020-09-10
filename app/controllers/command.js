@@ -8,6 +8,7 @@ module.exports = class Command extends Commando.Command {
         info.argsPromptLimit = info.argsPromptLimit || 1
         info.guildOnly = info.guildOnly !== undefined ? info.guildOnly : true
         super(client, info)
+
         this.adminOnly = info.adminOnly !== undefined ? info.adminOnly : info.group === 'admin' || info.group === 'voting'
     }
 
