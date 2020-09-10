@@ -9,7 +9,6 @@ const cronConfig = require('../../config/cron')
 module.exports = class Guild extends EventEmitter {
     constructor(bot, id) {
         super()
-
         this.bot = bot
         this.id = id
         this.guild = this.bot.client.guilds.cache.get(id)
@@ -17,7 +16,7 @@ module.exports = class Guild extends EventEmitter {
         this.data = undefined
         this.jobs = {}
 
-        this.once('ready', this.ready.bind(this))
+        this.on('ready', this.ready.bind(this))
     }
 
     loadData = async () => {
