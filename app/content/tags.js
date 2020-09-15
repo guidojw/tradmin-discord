@@ -23,4 +23,15 @@ module.exports = [{
         .addField('\u200b', 'Official TR Staff have access to the bot\'s logs. These logs are all sent in a private and strictly controlled Discord server. We use logs to provide a safe environment for the bot\'s users as well as for keeping our processes streamlined.')
         .addField('Requesting Data Deletion', 'To request deletion of your data, please contact the Staff at the support server. If you are banned from the server and still want to use your right to deletion, you can instead DM a Staff member through friend requests or mutual servers. Your data is ensured to be deleted within 14 days from your request.')
         .addField('Data Security', 'The TR Staff reserves the right to modify or delete any data at any given time, without notice or warning.')
+}, {
+    names: ['ticket'],
+    tag: new MessageEmbed()
+        .setColor(applicationConfig.primaryColor)
+        .setTitle('How to create a new support ticket?')
+        .setDescription(stripIndents`
+            You can create a new ticket by clicking the regarding number in #support. 
+            If applicable, the bot will ask you for a clear description of your report.
+            
+            Once submitted, our Ticket Moderators will respond to your ticket as soon as possible. This may take up to 24 hours, depending on your ticket type. 
+            `)
 }]
