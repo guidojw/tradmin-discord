@@ -67,7 +67,7 @@ class TicketController extends EventEmitter {
         await this.populateChannel()
 
         // Populate
-        // If the ticket type is a data loss report,
+        // If the ticket type is report-like,
         // ask the user for the actual report to be discussed
         if (this.type === TicketType.DATA_LOSS_REPORT || this.type === TicketType.PERSON_REPORT || this.type ===
             TicketType.BAN_APPEAL) {
@@ -141,10 +141,11 @@ class TicketController extends EventEmitter {
     }
 
     async submit () {
-        // If the ticket author is currently entering a data loss report
+        // If the ticket author is currently entering a report
         // or the ticket is a prize claim in creating channel state
-        if ((this.type === TicketType.DATA_LOSS_REPORT || this.type === TicketType.PERSON_REPORT) && (this.state ===
-            TicketState.REQUESTING_REPORT || this.state === TicketState.SUBMITTING_REPORT)
+        if ((this.type === TicketType.DATA_LOSS_REPORT || this.type === TicketType.PERSON_REPORT || this.type ===
+            TicketType.BAN_APPEAL)
+            && (this.state === TicketState.REQUESTING_REPORT || this.state === TicketState.SUBMITTING_REPORT)
             || this.type === TicketType.PRIZE_CLAIM && this.state === TicketState.CREATING_CHANNEL) {
 
             // Clear the submission timeout initialised in requestReport
