@@ -24,7 +24,8 @@ const TicketState = {
 const TicketType = {
     DATA_LOSS_REPORT: 'dataLossReport',
     PERSON_REPORT: 'personReport',
-    PRIZE_CLAIM: 'prizeClaim'
+    PRIZE_CLAIM: 'prizeClaim',
+    BAN_APPEAL: 'banAppeal'
 }
 
 const SUBMISSION_TIME = 30 * 60 * 1000 // time after which an unsubmitted ticket will be closed
@@ -54,7 +55,6 @@ class TicketController extends EventEmitter {
         } else {
             this.state = TicketState.RECONNECTED
         }
-
     }
 
     async init () {
@@ -69,7 +69,8 @@ class TicketController extends EventEmitter {
         // Populate
         // If the ticket type is a data loss report,
         // ask the user for the actual report to be discussed
-        if (this.type === TicketType.DATA_LOSS_REPORT || this.type === TicketType.PERSON_REPORT) {
+        if (this.type === TicketType.DATA_LOSS_REPORT || this.type === TicketType.PERSON_REPORT || this.type ===
+            TicketType.BAN_APPEAL) {
             await this.requestReport()
 
         // If the ticket type is a prize claim,
@@ -125,7 +126,7 @@ class TicketController extends EventEmitter {
         const embed = new MessageEmbed()
             .setColor(applicationConfig.primaryColor)
             .setAuthor(this.client.user.username, this.client.user.displayAvatarURL())
-            .setTitle('Please summarise your report')
+            .setTitle(`Please summarise your ${this.type === TicketType.BAN_APPEAL ? 'appeal' : 'report'}`)
             .setDescription(stripIndents`
                 You may use several messages and attach pictures/videos.
                 Use the command \`/submitreport\` once you're done or \`/closeticket\` to close your ticket.
@@ -159,7 +160,7 @@ class TicketController extends EventEmitter {
                 .setAuthor(this.client.user.username, this.client.user.displayAvatarURL())
                 .setTitle('Successfully submitted ticket')
                 .setDescription(stripIndents`
-                    Please wait for a Ticket Moderator to assess your ticket.
+                    Please wait for a Ticket Moderator to review your ticket.
                     This may take up to 24 hours. You can still close your ticket by using the \`/closeticket\` command.
                     `)
             await this.channel.send(embed)

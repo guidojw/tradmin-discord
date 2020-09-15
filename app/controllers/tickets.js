@@ -33,11 +33,11 @@ module.exports = class TicketsController {
             const id = parts[1]
 
             // Instantiate a new TicketController
-            const ticketController = new TicketController(this, this.client)
+            const ticketController = new TicketController(this, this.client, type)
             ticketController.id = id
             ticketController.channel = channel
             this.tickets[id] = ticketController
-            ticketController.once('close', this.clearTicket.bind(this, ticketController, type))
+            ticketController.once('close', this.clearTicket.bind(this, ticketController))
         }
 
         // Connect the message event for adding messages and moderators
@@ -73,6 +73,7 @@ module.exports = class TicketsController {
         const type = reaction.emoji.name === discordService.getEmojiFromNumber(1) ? TicketType.DATA_LOSS_REPORT
             : reaction.emoji.name === discordService.getEmojiFromNumber(2) ? TicketType.PERSON_REPORT
             : reaction.emoji.name === discordService.getEmojiFromNumber(3) ? TicketType.PRIZE_CLAIM
+            : reaction.emoji.name === discordService.getEmojiFromNumber(4) ? TicketType.BAN_APPEAL
             : undefined
         /* eslint-enable indent */
         if (type) {
