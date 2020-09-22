@@ -97,9 +97,19 @@ class TicketController extends EventEmitter {
     async populateChannel () {
         // Check if user is verified with RoVer
         // If so, the Roblox username and ID are retrieved
-        const response = (await roVerAdapter('get', `/user/${this.author.id}`)).data
-        const username = response.robloxUsername
-        const userId = response.robloxId
+        let username
+        let userId
+        try {
+            const response = (await roVerAdapter('get', `/user/1`)).data
+            username = response.robloxUsername
+            userId = response.robloxId
+
+        } catch (err) {
+            // If the error is not a not found error
+            if (err.response.status !== 404) {
+                throw err
+            }
+        }
 
         const date = new Date()
         const readableDate = timeHelper.getDate(date)
@@ -111,8 +121,8 @@ class TicketController extends EventEmitter {
             .setAuthor(this.client.user.username, this.client.user.displayAvatarURL())
             .setTitle('Ticket Information')
             .setDescription(stripIndents`
-                Username: ${username ? '**' + username + '**' : '*User is not verified with RoVer*'}
-                User ID: ${userId ? '**' + userId + '**' : '*User is not verified with RoVer*'}
+                Username: ${username ? '**' + username + '**' : '*unknown (user is not verified with RoVer)*'}
+                User ID: ${userId ? '**' + userId + '**' : '*unknown (user is not verified with RoVer)*'}
                 Start time: ${readableDate + ' ' + readableTime}
                 `)
             .setFooter(`Ticket ID: ${this.id}`)
