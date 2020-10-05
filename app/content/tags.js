@@ -44,6 +44,6 @@ module.exports = [{
             
             YouTube does have multiple tutorials on the process, for example:
             - [Using CSG in Roblox Studio](https://youtu.be/a0iPvgKUzU0)
-            - [Or 3D modelling in Blender](https://youtu.be/TPrnSACiTJ4)
+            - [3D modelling in Blender](https://youtu.be/TPrnSACiTJ4)
         `)
 }]
