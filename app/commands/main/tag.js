@@ -26,9 +26,13 @@ module.exports = class TagCommand extends Command {
     }
 
     async execute (message, { name }, guild) {
+        const names = name.split(' ')
+        name = names.shift()
+
         if (name !== 'all') {
             const tag = tags.find(tag => tag.names.includes(name))
             if (!tag) return message.reply('Couldn\'t find tag!')
+
             if (tag.group === 'admin') {
                 if (!discordService.isAdmin(message.member, guild.getData('adminRoles'))) {
                     return message.reply('You do not have permission to see that tag.')
@@ -40,6 +44,7 @@ module.exports = class TagCommand extends Command {
                     }
                 }
             }
+
             return message.reply(tag.tag)
 
         } else {
@@ -51,6 +56,7 @@ module.exports = class TagCommand extends Command {
                     count++
                 }
             }
+
             const embed = new MessageEmbed()
                 .setTitle('Tags')
                 .setDescription(list)
