@@ -40,11 +40,10 @@ module.exports = [{
         .setColor(applicationConfig.primaryColor)
         .setTitle('We do not take train suggestions.')
         .setDescription(stripIndents`
-            If you wish for a train to be in the game, you would need to model one yourself and submit it.
-            #faq has some more information on submissions.
+            If you wish for a train to be in the game, you would need to model one yourself and submit it. #faq has some more information about submissions.
             
             YouTube does have multiple tutorials on the process, for example:
-            - Using CSG in studio https://youtu.be/a0iPvgKUzU0
-            - Or mesh models in Blender https://youtu.be/TPrnSACiTJ4
+            - [Using CSG in Roblox Studio](https://youtu.be/a0iPvgKUzU0)
+            - [Or 3D modelling in Blender](https://youtu.be/TPrnSACiTJ4)
         `)
 }]
