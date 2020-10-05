@@ -34,4 +34,16 @@ module.exports = [{
             
             Once submitted, our Ticket Moderators will respond to your ticket as soon as possible. This may take up to 24 hours, depending on your ticket type. 
             `)
+}, {
+    names: ['train'],
+    tag: new MessageEmbed()
+        .setColor(applicationConfig.primaryColor)
+        .setTitle('We do not take train suggestions.')
+        .setDescription(stripIndents`
+            If you wish for a train to be in the game, you would need to model one yourself and submit it. #faq has some more information about submissions.
+            
+            YouTube does have multiple tutorials on the process, for example:
+            - [Using CSG in Roblox Studio](https://youtu.be/a0iPvgKUzU0)
+            - [Or 3D modelling in Blender](https://youtu.be/TPrnSACiTJ4)
+        `)
 }]
