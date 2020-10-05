@@ -45,7 +45,8 @@ module.exports = class TagCommand extends Command {
                 }
             }
 
-            return message.reply(tag.tag)
+            // Don't reply but send instead to avoid confusion about for who the tag was requested.
+            return message.channel.send(tag.tag)
 
         } else {
             let list = ''
