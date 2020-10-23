@@ -100,7 +100,7 @@ class TicketController extends EventEmitter {
         let username
         let userId
         try {
-            const response = (await roVerAdapter('get', `/user/1`)).data
+            const response = (await roVerAdapter('get', `/user/${this.author.id}`)).data
             username = response.robloxUsername
             userId = response.robloxId
 
