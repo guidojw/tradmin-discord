@@ -9,17 +9,15 @@ module.exports = class ClearCommand extends Command {
       name: 'clearchannel',
       aliases: ['clear'],
       description: 'Clears given channel.',
-      details: 'Only channels #bug-reports and #suggestions can be cleared. This will delete all messages but ' +
-        'the important information ones.',
+      details: 'Only channels #bug-reports and #suggestions can be cleared. This will delete all messages but the ' +
+        'important information ones.',
       examples: ['clear #suggestions'],
-      clientPermissions: ['MANAGE_MESSAGES', 'ADD_REACTIONS', 'VIEW_CHANNEL', 'SEND_MESSAGES'],
-      args: [
-        {
-          key: 'channel',
-          prompt: 'What channel would you like to clear?',
-          type: 'channel'
-        }
-      ]
+      clientPermissions: ['MANAGE_MESSAGES', 'ADD_REACTIONS', 'SEND_MESSAGES'],
+      args: [{
+        key: 'channel',
+        prompt: 'What channel would you like to clear?',
+        type: 'channel'
+      }]
     })
   }
 
@@ -33,17 +31,17 @@ module.exports = class ClearCommand extends Command {
     }
 
     const prompt = await message.reply(`Are you sure you would like to clear ${channel}?`)
-    const choice = await discordService.prompt(message.channel, message.author, prompt, ['✅', '🚫']) ===
-      '✅'
+    const choice = await discordService.prompt(message.channel, message.author, prompt, ['✅', '🚫']) === '✅'
 
     if (choice) {
       const guildMessages = guild.getData('messages')
       let messages
       do {
-        messages = await channel.messages.fetch({
-          after: channel.id === suggestionsChannelId ? guildMessages
-            .firstSuggestionMessage : guildMessages.firstBugReportMessage
-        })
+        const after = channel.id === suggestionsChannelId
+          ? guildMessages.firstSuggestionMessage
+          : guildMessages.firstBugReportMessage
+        messages = await channel.messages.fetch({ after })
+
         if (messages.size > 0) {
           try {
             await channel.bulkDelete(messages)
@@ -54,6 +52,7 @@ module.exports = class ClearCommand extends Command {
           }
         }
       } while (messages.size > 0)
+
       message.reply(`Successfully cleared ${channel}.`)
     } else {
       message.reply(`Didn't clear ${channel}.`)

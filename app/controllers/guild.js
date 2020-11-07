@@ -20,47 +20,55 @@ module.exports = class Guild extends EventEmitter {
     this.once('ready', this.ready.bind(this))
   }
 
-  loadData = async () => {
+  async loadData () {
     try {
       await fs.promises.access(this.dataPath)
     } catch (err) {
       await fs.promises.writeFile(this.dataPath, JSON.stringify({})) // TODO: default settings
     }
-
     this.data = JSON.parse(await fs.promises.readFile(this.dataPath))
-
     this.emit('ready')
   }
 
   async setData (key, value) {
-    if (!this.data) throw new Error('Guild data is not loaded yet.')
+    if (!this.data) {
+      throw new Error('Guild data is not loaded yet.')
+    }
     this.data[key] = value
     await fs.promises.writeFile(this.dataPath, JSON.stringify(this.data))
   }
 
   getData (key) {
-    if (!this.data) throw new Error('Guild data is not loaded yet.')
+    if (!this.data) {
+      throw new Error('Guild data is not loaded yet.')
+    }
     return this.data[key]
   }
 
   ready () {
+    // Voting system jobs
     const voteData = this.getData('vote')
     if (voteData && voteData.timer && voteData.timer.end > Date.now()) {
       this.scheduleJob('saveVoteJob')
       this.scheduleJob('updateTimerJob')
     }
 
+    // Other jobs
     this.scheduleJob('premiumMembersReportJob')
   }
 
   scheduleJob (name) {
-    if (this.jobs[name]) throw new Error('A job with that name already exists.')
+    if (this.jobs[name]) {
+      throw new Error('A job with that name already exists.')
+    }
     const job = cronConfig[name]
-    this.jobs[name] = cron.schedule(job.expression, () => job.job(this))
+    this.jobs[name] = cron.schedule(job.expression, job.job.bind(job.job, this))
   }
 
   stopJob (name) {
-    if (!this.jobs[name]) throw new Error('No job with that name exists.')
+    if (!this.jobs[name]) {
+      throw new Error('No job with that name exists.')
+    }
     this.jobs[name].stop()
   }
 }

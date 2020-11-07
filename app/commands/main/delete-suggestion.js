@@ -9,7 +9,7 @@ module.exports = class DeleteSuggestionCommand extends Command {
       name: 'deletesuggestion',
       aliases: ['delete'],
       description: 'Deletes your last suggested suggestion.',
-      clientPermissions: ['MANAGE_MESSAGES', 'ADD_REACTIONS', 'VIEW_CHANNEL', 'SEND_MESSAGES']
+      clientPermissions: ['MANAGE_MESSAGES', 'ADD_REACTIONS', 'SEND_MESSAGES']
     })
   }
 
@@ -23,11 +23,10 @@ module.exports = class DeleteSuggestionCommand extends Command {
     for (const suggestion of messages.values()) {
       if (suggestion.embeds.length === 1 && suggestion.embeds[0].author.url === authorUrl && suggestion.id !==
         guildMessages.suggestionsMessage) {
-
-        const prompt = await message.replyEmbed(suggestion.embeds[0], 'Are you sure would like to ' +
-          'delete this suggestion?')
-        const choice = await discordService.prompt(message.channel, message.author, prompt, ['✅',
-          '🚫']) === '✅'
+        const prompt = await message.replyEmbed(suggestion.embeds[0], 'Are you sure would like to delete this' +
+          ' suggestion?')
+        const choice = await discordService.prompt(message.channel, message.author, prompt, ['✅', '🚫']) ===
+          '✅'
 
         if (choice) {
           await suggestion.delete()
@@ -38,6 +37,7 @@ module.exports = class DeleteSuggestionCommand extends Command {
         return
       }
     }
+
     message.reply('Could not find a suggestion you made.')
   }
 }

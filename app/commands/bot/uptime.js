@@ -1,5 +1,6 @@
 'use strict'
 const Command = require('../../controllers/command')
+
 const { MessageEmbed } = require('discord.js')
 const { getDurationString } = require('../../helpers/time')
 
@@ -11,7 +12,7 @@ module.exports = class UptimeCommand extends Command {
       group: 'bot',
       name: 'uptime',
       description: 'Posts the bot\'s uptime.',
-      clientPermissions: ['MANAGE_MESSAGES', 'SEND_MESSAGES']
+      clientPermissions: ['SEND_MESSAGES']
     })
   }
 

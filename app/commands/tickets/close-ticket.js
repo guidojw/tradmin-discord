@@ -1,6 +1,7 @@
 'use strict'
 const Command = require('../../controllers/command')
 const discordService = require('../../services/discord')
+
 const { stripIndents } = require('common-tags')
 const { TicketState } = require('../../controllers/ticket')
 
@@ -31,23 +32,21 @@ module.exports = class CloseTicketCommand extends Command {
     if (ticketController) {
       // Prompt the user if they really want to close the ticket
       const prompt = await message.channel.send('Are you sure you want to close this ticket?')
-      const choice = await discordService.prompt(message.channel, message.author, prompt, ['✅', '🚫'])
-        === '✅'
+      const choice = await discordService.prompt(message.channel, message.author, prompt, ['✅', '🚫']) ===
+        '✅'
 
       if (choice) {
         // Log the action
         await this.client.bot.log(message.author, stripIndents`
-                        ${message.author} **closed ticket** \`${ticketController.id}\`
-                        ${message.content}
-                        `, `Ticket ID: ${ticketController.id}`)
+        ${message.author} **closed ticket** \`${ticketController.id}\`
+        ${message.content}
+        `, `Ticket ID: ${ticketController.id}`)
 
         if ((ticketController.state === TicketState.SUBMITTING_REPORT || ticketController.state === TicketState
           .CONNECTED) && message.author === ticketController.author) {
           return ticketController.close('Ticket successfully closed.', false, applicationConfig.primaryColor)
-
         } else if (message.author !== ticketController.author) {
-          return ticketController.close('The moderator has closed your ticket.', true, applicationConfig
-            .primaryColor)
+          return ticketController.close('The moderator has closed your ticket.', true, applicationConfig.primaryColor)
         }
       }
     }

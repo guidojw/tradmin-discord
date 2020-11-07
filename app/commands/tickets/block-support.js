@@ -12,13 +12,11 @@ module.exports = class BlockSupportCommand extends Command {
       examples: ['blocksupport Happywalker'],
       clientPermissions: ['SEND_MESSAGES'],
       adminOnly: true,
-      args: [
-        {
-          key: 'member',
-          type: 'member',
-          prompt: 'Who would you like to block?'
-        }
-      ]
+      args: [{
+        key: 'member',
+        type: 'member',
+        prompt: 'Who would you like to block?'
+      }]
     })
   }
 

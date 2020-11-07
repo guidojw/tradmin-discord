@@ -9,7 +9,7 @@ module.exports = class AddOptionCommand extends Command {
       aliases: ['vadd'],
       description: 'Adds given user as an option to vote at.',
       examples: ['addoption', 'addoption Guido "Hi, my name is Joe."'],
-      clientPermissions: ['MANAGE_MESSAGES', 'SEND_MESSAGES'],
+      clientPermissions: ['SEND_MESSAGES'],
       args: [{
         key: 'user',
         type: 'user',
@@ -24,12 +24,19 @@ module.exports = class AddOptionCommand extends Command {
 
   execute (message, { user, description }, guild) {
     const voteData = guild.getData('vote')
-    if (!voteData) return message.reply('There\'s no vote created yet, create one using the createvote command.')
-    if (voteData.timer) return message.reply('The vote has already been started.')
-    if (user.id in voteData.options) return message.reply('User is already an option.')
+    if (!voteData) {
+      return message.reply('There\'s no vote created yet, create one using the createvote command.')
+    }
+    if (voteData.timer) {
+      return message.reply('The vote has already been started.')
+    }
+    if (user.id in voteData.options) {
+      return message.reply('User is already an option.')
+    }
 
     voteData.options[user.id] = { description: description, votes: [] }
     guild.setData('vote', voteData)
+
     message.reply('Added option.')
   }
 }

@@ -1,6 +1,7 @@
 'use strict'
 const Command = require('../../controllers/command')
 const discordService = require('../../services/discord')
+
 const { MessageEmbed } = require('discord.js')
 
 const applicationConfig = require('../../../config/application')
@@ -15,13 +16,11 @@ module.exports = class TagCommand extends Command {
       description: 'Posts given tag.',
       examples: ['tag rr'],
       clientPermissions: ['SEND_MESSAGES'],
-      args: [
-        {
-          key: 'name',
-          type: 'string',
-          prompt: 'What tag would you like to check out?'
-        }
-      ]
+      args: [{
+        key: 'name',
+        type: 'string',
+        prompt: 'What tag would you like to check out?'
+      }]
     })
   }
 
@@ -31,15 +30,16 @@ module.exports = class TagCommand extends Command {
 
     if (name !== 'all') {
       const tag = tags.find(tag => tag.names.includes(name))
-      if (!tag) return message.reply('Couldn\'t find tag!')
 
+      if (!tag) {
+        return message.reply('Couldn\'t find tag!')
+      }
       if (tag.group === 'admin') {
         if (!discordService.isAdmin(message.member, guild.getData('adminRoles'))) {
           return message.reply('You do not have permission to see that tag.')
         } else {
           const channels = guild.getData('channels')
-          if (message.channel.id !== channels.adminChannel && message.channel.id !== channels
-            .botCommandsAdminChannel) {
+          if (message.channel.id !== channels.adminChannel && message.channel.id !== channels.botCommandsAdminChannel) {
             return message.reply('Wrong channel.')
           }
         }
@@ -47,7 +47,6 @@ module.exports = class TagCommand extends Command {
 
       // Don't reply but send instead to avoid confusion about for who the tag was requested.
       return message.channel.send(tag.tag)
-
     } else {
       let list = ''
       let count = 1

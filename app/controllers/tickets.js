@@ -1,5 +1,6 @@
 'use strict'
 const discordService = require('../services/discord')
+
 const { MessageEmbed } = require('discord.js')
 const { TicketController, TicketState, TicketType } = require('./ticket')
 
@@ -69,15 +70,16 @@ module.exports = class TicketsController {
     }
 
     // If the reaction is one of the TicketTypes' assigned reactions
-    /* eslint-disable indent */
-    const type = reaction.emoji.name === discordService.getEmojiFromNumber(1) ? TicketType.DATA_LOSS_REPORT
-      : reaction.emoji.name === discordService.getEmojiFromNumber(2) ? TicketType.PERSON_REPORT
-        : reaction.emoji.name === discordService.getEmojiFromNumber(3) ? TicketType.PRIZE_CLAIM
-          : reaction.emoji.name === discordService.getEmojiFromNumber(4) ? TicketType.BAN_APPEAL
+    const type = reaction.emoji.name === discordService.getEmojiFromNumber(1)
+      ? TicketType.DATA_LOSS_REPORT
+      : reaction.emoji.name === discordService.getEmojiFromNumber(2)
+        ? TicketType.PERSON_REPORT
+        : reaction.emoji.name === discordService.getEmojiFromNumber(3)
+          ? TicketType.PRIZE_CLAIM
+          : reaction.emoji.name === discordService.getEmojiFromNumber(4)
+            ? TicketType.BAN_APPEAL
             : undefined
-    /* eslint-enable indent */
     if (type) {
-
       // Immediately remove the reaction
       await reaction.users.remove(user)
 
@@ -165,7 +167,6 @@ module.exports = class TicketsController {
         if (ticketController.state === TicketState.SUBMITTING_REPORT) {
           ticketController.report.push(message)
         }
-
       } else {
         // If the author is not yet added to the ticket's moderators,
         // add the author to the ticket's moderators

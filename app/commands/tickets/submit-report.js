@@ -1,8 +1,9 @@
 'use strict'
 const Command = require('../../controllers/command')
 const discordService = require('../../services/discord')
-const { TicketState } = require('../../controllers/ticket')
+
 const { MessageEmbed } = require('discord.js')
+const { TicketState } = require('../../controllers/ticket')
 
 const applicationConfig = require('../../../config/application')
 
@@ -31,7 +32,6 @@ module.exports = class SubmitReportCommand extends Command {
     if (ticketController) {
       // If user is currently entering a report
       if (ticketController.state === TicketState.SUBMITTING_REPORT) {
-
         // Tell the user they have to send messages first
         if (ticketController.report.length === 0) {
           const embed = new MessageEmbed()
@@ -43,13 +43,12 @@ module.exports = class SubmitReportCommand extends Command {
         }
 
         const prompt = await message.channel.send('Are you sure you want to submit your report?')
-        const choice = await discordService.prompt(message.channel, message.author, prompt, ['✅',
-          '🚫']) === '✅'
+        const choice = await discordService.prompt(message.channel, message.author, prompt, ['✅', '🚫']) ===
+          '✅'
 
         if (choice) {
           return ticketController.submit()
         }
-
       } else {
         return message.reply('You\'re not currently filing a report.')
       }

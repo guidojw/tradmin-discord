@@ -1,12 +1,13 @@
 'use strict'
 const EventEmitter = require('events')
-const { MessageEmbed, DiscordAPIError } = require('discord.js')
-const discordService = require('../services/discord')
-const { stripIndents } = require('common-tags')
+const pluralize = require('pluralize')
 const short = require('short-uuid')
+const discordService = require('../services/discord')
 const roVerAdapter = require('../adapters/roVer')
 const timeHelper = require('../helpers/time')
-const pluralize = require('pluralize')
+
+const { MessageEmbed, DiscordAPIError } = require('discord.js')
+const { stripIndents } = require('common-tags')
 
 const applicationConfig = require('../../config/application')
 
@@ -69,8 +70,8 @@ class TicketController extends EventEmitter {
     // Populate
     // If the ticket type is report-like,
     // ask the user for the actual report to be discussed
-    if (this.type === TicketType.DATA_LOSS_REPORT || this.type === TicketType.PERSON_REPORT || this.type ===
-      TicketType.BAN_APPEAL) {
+    if (this.type === TicketType.DATA_LOSS_REPORT || this.type === TicketType.PERSON_REPORT || this.type === TicketType
+      .BAN_APPEAL) {
       await this.requestReport()
 
       // If the ticket type is a prize claim,
@@ -103,7 +104,6 @@ class TicketController extends EventEmitter {
       const response = (await roVerAdapter('get', `/user/${this.author.id}`)).data
       username = response.robloxUsername
       userId = response.robloxId
-
     } catch (err) {
       // If the error is not a not found error
       if (err.response.status !== 404) {
@@ -121,10 +121,10 @@ class TicketController extends EventEmitter {
       .setAuthor(this.client.user.username, this.client.user.displayAvatarURL())
       .setTitle('Ticket Information')
       .setDescription(stripIndents`
-                Username: ${username ? '**' + username + '**' : '*unknown (user is not verified with RoVer)*'}
-                User ID: ${userId ? '**' + userId + '**' : '*unknown (user is not verified with RoVer)*'}
-                Start time: ${readableDate + ' ' + readableTime}
-                `)
+      Username: ${username ? '**' + username + '**' : '*unknown (user is not verified with RoVer)*'}
+      User ID: ${userId ? '**' + userId + '**' : '*unknown (user is not verified with RoVer)*'}
+      Start time: ${readableDate + ' ' + readableTime}
+      `)
       .setFooter(`Ticket ID: ${this.id}`)
     await this.channel.send(`${this.author}`, { embed })
   }
@@ -138,9 +138,9 @@ class TicketController extends EventEmitter {
       .setAuthor(this.client.user.username, this.client.user.displayAvatarURL())
       .setTitle(`Please summarise your ${this.type === TicketType.BAN_APPEAL ? 'appeal' : 'report'}`)
       .setDescription(stripIndents`
-                You may use several messages and attach pictures/videos.
-                Use the command \`/submitreport\` once you're done or \`/closeticket\` to close your ticket.
-                `)
+      You may use several messages and attach pictures/videos.
+      Use the command \`/submitreport\` once you're done or \`/closeticket\` to close your ticket.
+      `)
     await this.channel.send(embed)
 
     // Initialise the submission timeout after which the ticket will
@@ -153,17 +153,14 @@ class TicketController extends EventEmitter {
   async submit () {
     // If the ticket author is currently entering a report
     // or the ticket is a prize claim in creating channel state
-    if ((this.type === TicketType.DATA_LOSS_REPORT || this.type === TicketType.PERSON_REPORT || this.type ===
-      TicketType.BAN_APPEAL)
-      && (this.state === TicketState.REQUESTING_REPORT || this.state === TicketState.SUBMITTING_REPORT)
-      || this.type === TicketType.PRIZE_CLAIM && this.state === TicketState.CREATING_CHANNEL) {
-
+    if (((this.type === TicketType.DATA_LOSS_REPORT || this.type === TicketType.PERSON_REPORT || this.type ===
+      TicketType.BAN_APPEAL) && (this.state === TicketState.REQUESTING_REPORT || this.state === TicketState
+      .SUBMITTING_REPORT)) || (this.type === TicketType.PRIZE_CLAIM && this.state === TicketState.CREATING_CHANNEL)) {
       // Clear the submission timeout initialised in requestReport
       clearTimeout(this.timeout)
 
       // Log the action
-      await this.client.bot.log(this.author,
-        `${this.author} **opened ticket** \`${this.id}\` **in** ${this.channel}`, `Ticket ID: ${this.id}`)
+      await this.client.bot.log(this.author, `${this.author} **opened ticket** \`${this.id}\` **in** ${this.channel}`, `Ticket ID: ${this.id}`)
 
       // Send success embed in which the following process is clarified
       const embed = new MessageEmbed()
@@ -171,9 +168,9 @@ class TicketController extends EventEmitter {
         .setAuthor(this.client.user.username, this.client.user.displayAvatarURL())
         .setTitle('Successfully submitted ticket')
         .setDescription(stripIndents`
-                    Please wait for a Ticket Moderator to review your ticket.
-                    This may take up to 24 hours. You can still close your ticket by using the \`/closeticket\` command.
-                    `)
+        Please wait for a Ticket Moderator to review your ticket.
+        This may take up to 24 hours. You can still close your ticket by using the \`/closeticket\` command.
+        `)
       await this.channel.send(embed)
 
       // Allow Ticket Moderators to see the channel
@@ -199,7 +196,7 @@ class TicketController extends EventEmitter {
 
       // Send closing message
       const embed = new MessageEmbed()
-        .setColor(color ? color : success ? 0x00ff00 : 0xff0000)
+        .setColor(color || success ? 0x00ff00 : 0xff0000)
         .setAuthor(this.client.user.username, this.client.user.displayAvatarURL())
         .setTitle(message)
       await this.sendAuthor(embed)
@@ -286,9 +283,9 @@ class TicketController extends EventEmitter {
       .setAuthor(this.author.tag, this.author.displayAvatarURL())
       .setTitle('Ticket Rating')
       .setDescription(stripIndents`
-                ${pluralize('Moderator', this.moderators.length)}: ${result}
-                Rating: **${rating}**
-                `)
+      ${pluralize('Moderator', this.moderators.length)}: ${result}
+      Rating: **${rating}**
+      `)
       .setFooter(`Ticket ID: ${this.id}`)
     await channel.send(ratingEmbed)
 
