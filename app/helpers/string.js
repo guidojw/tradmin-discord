@@ -3,9 +3,9 @@ const urlExpression = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-z
 const urlRegex = new RegExp(urlExpression)
 
 exports.getTags = string => {
-    return string.match(/<@([0-9]+)>/)
+  return string.match(/<@([0-9]+)>/)
 }
 
 exports.getUrls = string => {
-    return string.match(urlRegex)
+  return string.match(urlRegex)
 }
