@@ -2,7 +2,7 @@ version: '3'
 
 services:
   app:
-    image: docker.guidojw.nl/tradmin/tradmin-discord:latest
+    image: docker.guidojw.nl/twin-rail/tradmin-discord:latest
     restart: unless-stopped
     env_file: .env
     environment:
