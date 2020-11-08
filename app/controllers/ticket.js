@@ -6,7 +6,7 @@ const discordService = require('../services/discord')
 const roVerAdapter = require('../adapters/roVer')
 const timeHelper = require('../helpers/time')
 
-const { MessageEmbed, DiscordAPIError } = require('discord.js')
+const { MessageEmbed } = require('discord.js')
 const { stripIndents } = require('common-tags')
 
 const applicationConfig = require('../../config/application')
@@ -199,7 +199,7 @@ class TicketController extends EventEmitter {
         .setColor(color || success ? 0x00ff00 : 0xff0000)
         .setAuthor(this.client.user.username, this.client.user.displayAvatarURL())
         .setTitle(message)
-      await this.sendAuthor(embed)
+      await this.client.bot.send(this.author, embed)
 
       // Request for the ticket creator's rating if
       // the ticket was closed successfully
@@ -213,29 +213,16 @@ class TicketController extends EventEmitter {
           // If no rating is submitted after the reaction collector closes
         } else {
           // Tell the user their rating hasn't been submitted
-          const successEmbed = new MessageEmbed()
+          const embed = new MessageEmbed()
             .setColor(applicationConfig.primaryColor)
             .setAuthor(this.client.user.username, this.client.user.displayAvatarURL())
             .setTitle('No rating submitted')
-          await this.sendAuthor(successEmbed)
+          await this.client.bot.send(this.author, embed)
         }
       }
     }
 
     this.emit('close')
-  }
-
-  async sendAuthor (content) {
-    try {
-      return await this.author.send(content)
-    } catch (err) {
-      if (err instanceof DiscordAPIError) {
-        // Most likely because the author has DMs closed,
-        // do nothing
-      } else {
-        throw err
-      }
-    }
   }
 
   async requestRating () {
@@ -246,7 +233,7 @@ class TicketController extends EventEmitter {
       .setColor(applicationConfig.primaryColor)
       .setAuthor(this.client.user.username, this.client.user.displayAvatarURL())
       .setTitle('How would you rate the support you got?')
-    const message = await this.sendAuthor(embed)
+    const message = await this.client.bot.send(this.author, embed)
 
     // Prompt how the user rates their support
     const options = []
@@ -295,7 +282,7 @@ class TicketController extends EventEmitter {
       .setAuthor(this.client.user.username, this.client.user.displayAvatarURL())
       .setTitle('Rating submitted')
       .setDescription('Thank you!')
-    return this.sendAuthor(successEmbed)
+    return this.client.bot.send(this.author, successEmbed)
   }
 
   static getTypeFromName (name) {

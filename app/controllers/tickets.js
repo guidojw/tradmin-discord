@@ -99,18 +99,18 @@ module.exports = class TicketsController {
             .setAuthor(this.client.user.username, this.client.user.displayAvatarURL())
             .setTitle('Welcome to Twin-Rail Support')
             .setDescription('We are currently closed. Check the Twin-Rail server for more information.')
-          return user.send(embed)
+          return this.client.bot.send(user, embed)
         }
 
         // Check if the user is banned from making tickets
         const member = guild.guild.member(user)
         const roles = guild.getData('roles')
         if (member.roles.cache.has(roles.ticketsBannedRole)) {
-          const banEmbed = new MessageEmbed()
+          const embed = new MessageEmbed()
             .setColor(0xff0000)
             .setTitle('Couldn\'t make ticket')
             .setDescription('You\'re banned from making new tickets.')
-          return user.send(banEmbed)
+          return this.client.bot.send(user, embed)
         }
 
         clearTimeout(timeout)
@@ -122,11 +122,11 @@ module.exports = class TicketsController {
 
         // If author already has created a ticket
       } else if (ticketController) {
-        const banEmbed = new MessageEmbed()
+        const embed = new MessageEmbed()
           .setColor(0xff0000)
           .setTitle('Couldn\'t make ticket')
           .setDescription('You already have an open ticket.')
-        await user.send(banEmbed)
+        return this.client.bot.send(user, embed)
       }
     }
   }
