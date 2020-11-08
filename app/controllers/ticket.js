@@ -46,7 +46,6 @@ class TicketController extends EventEmitter {
       this.state = TicketState.INIT
 
       this.init()
-
     } else {
       // If this is a reconnected ticket
       // being reinstantiated after reboot.
@@ -115,7 +114,6 @@ class TicketController extends EventEmitter {
 
   async submit () {
     if (this.state === TicketState.CREATING_CHANNEL) {
-
       const embed = new MessageEmbed()
         .setColor(applicationConfig.primaryColor)
         .setDescription(stripIndents`
