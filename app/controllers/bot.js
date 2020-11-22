@@ -18,7 +18,7 @@ module.exports = class Bot {
       owner: applicationConfig.owner,
       unknownCommandResponse: false,
       disableEveryone: true,
-      partials: ['MESSAGE', 'REACTION', 'MEMBER']
+      partials: ['MESSAGE', 'REACTION', 'USER']
     })
     this.client.bot = this
     this.currentActivity = 0
@@ -113,7 +113,12 @@ module.exports = class Bot {
       return
     }
     const guild = this.getGuild(reaction.message.guild.id)
-    const member = guild.guild.member(user)
+    let member
+    try {
+      member = await guild.guild.members.fetch(user)
+    } catch (err) {
+      return
+    }
 
     // Handle role messages
     const roleMessages = guild.getData('roleMessages')
@@ -159,11 +164,13 @@ module.exports = class Bot {
     if (!reaction.message.guild) {
       return
     }
-    if (reaction.message.member.partial) {
-      await reaction.message.member.fetch()
-    }
     const guild = this.getGuild(reaction.message.guild.id)
-    const member = guild.guild.member(user)
+    let member
+    try {
+      member = await guild.guild.members.fetch(user)
+    } catch (err) {
+      return
+    }
 
     // Handle role messages
     const roleMessages = guild.getData('roleMessages')
