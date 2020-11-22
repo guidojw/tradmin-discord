@@ -30,7 +30,7 @@ module.exports = class SuggestCommand extends Command {
     const guild = this.client.bot.getGuild(message.guild.id)
     const roles = guild.getData('roles')
     if (message.member.roles.cache.has(roles.suggestionsBannedRole)) {
-      return 'You are banned from using the delete command.'
+      return 'You are banned from using the suggest command.'
     }
     const channels = guild.getData('channels')
     return message.member.roles.cache.has(roles.suggestionsRole) || `Please check <#${channels.rolesChannel}> first.`
