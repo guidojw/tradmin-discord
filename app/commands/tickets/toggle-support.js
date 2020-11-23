@@ -16,13 +16,11 @@ module.exports = class ToggleSupportCommand extends Command {
   }
 
   execute (message) {
-    // Toggle the setting
     const settings = this.client.bot.mainGuild.getData('settings')
 
     settings.supportEnabled = !settings.supportEnabled
     this.client.bot.mainGuild.setData('settings', settings)
 
-    // Send success message
     const embed = new MessageEmbed()
       .setColor(settings.supportEnabled ? 0x00ff00 : 0xff0000)
       .setTitle('Successfully toggled support')
