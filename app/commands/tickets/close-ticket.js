@@ -33,7 +33,7 @@ module.exports = class CloseTicketCommand extends Command {
       const choice = await discordService.prompt(message.channel, message.author, prompt, ['✅', '🚫']) === '✅'
 
       if (choice) {
-        if (ticketController.state === TicketState.CONNECTED || this.state === TicketState.RECONNECTED) {
+        if (ticketController.state === TicketState.CONNECTED || ticketController.state === TicketState.RECONNECTED) {
           this.client.bot.log(message.author, stripIndents`
           ${message.author} **closed ticket** \`${ticketController.id}\`
           ${message.content}
