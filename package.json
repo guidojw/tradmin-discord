@@ -17,7 +17,7 @@
   "license": "MIT",
   "dependencies": {
     "@sentry/node": "^5.29.2",
-    "axios": "^0.20.0",
+    "axios": "^0.21.1",
     "common-tags": "^1.8.0",
     "discord.js": "^12.5.1",
     "discord.js-commando": "github:discordjs/Commando",
@@ -27,7 +27,7 @@
     "short-uuid": "^4.0.1"
   },
   "devDependencies": {
-    "eslint": "^7.15.0",
+    "eslint": "^7.17.0",
     "nodemon": "^2.0.7",
     "standard": "^16.0.3"
   }
