@@ -38,7 +38,7 @@ module.exports = class BoostInfoCommand extends Command {
     }
     const years = Math.floor(months / 12)
     months %= 12
-    const emoji = guild.emojis.cache.find(emoji => emoji.name.toLowerCase() === 'boost')
+    const emoji = this.client.bot.mainGuild.guld.emojis.cache.find(emoji => emoji.name.toLowerCase() === 'boost')
     if (member.user.partial) {
       await member.user.partial.fetch()
     }
