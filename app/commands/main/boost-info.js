@@ -38,17 +38,16 @@ module.exports = class BoostInfoCommand extends Command {
     }
     const years = Math.floor(months / 12)
     months %= 12
-    const emojis = guild.getData('emojis')
-    const emoji = guild.guild.emojis.cache.find(emoji => emoji.id === emojis.boostEmoji)
+    const emoji = this.client.mainGuild.emojis.cache.find(emoji => emoji.name.toLowerCase() === 'boost')
     if (member.user.partial) {
       await member.user.partial.fetch()
     }
 
     const embed = new MessageEmbed()
-      .setTitle(`${member.user.tag} ${emoji}`)
+      .setTitle(`${member.user.tag}${emoji ? ` ${emoji}` : ''}`)
       .setThumbnail(member.user.displayAvatarURL())
       .setDescription(`Has been boosting this server for ${years > 0 ? `**${years}** ${pluralize('year', years)}, ` : ''}**${months}** ${pluralize('month', months)} and **${days}** ${pluralize('day', days)}!`)
       .setColor(0xff73fa)
-    message.replyEmbed(embed)
+    return message.replyEmbed(embed)
   }
 }
