@@ -56,14 +56,16 @@ exports.getTimeInfo = timeString => {
 }
 
 exports.getDurationString = milliseconds => {
-  const days = Math.floor(milliseconds / (24 * 60 * 60 * 1000))
+  const years = Math.floor(milliseconds / (365.25 * 24 * 60 * 60 * 1000))
+  const yearsMilliseconds = milliseconds / (365.25 * 24 * 60 * 60 * 1000)
+  const days = Math.floor(yearsMilliseconds / (24 * 60 * 60 * 1000))
   const daysMilliseconds = milliseconds % (24 * 60 * 60 * 1000)
   const hours = Math.floor(daysMilliseconds / (60 * 60 * 1000))
   const hoursMilliseconds = milliseconds % (60 * 60 * 1000)
   const minutes = Math.floor(hoursMilliseconds / (60 * 1000))
   const minutesMilliseconds = milliseconds % (60 * 1000)
   const seconds = Math.floor(minutesMilliseconds / (1000))
-  return `${days > 0 ? days + 'd ' : ''}${hours > 0 ? hours + 'h ' : ''}${minutes > 0 ? minutes + 'm ' : ''}${seconds > 0 ? seconds + 's ' : ''}`
+  return `${years > 0 ? years + 'y ' : ''}${days > 0 ? days + 'd ' : ''}${hours > 0 ? hours + 'h ' : ''}${minutes > 0 ? minutes + 'm ' : ''}${seconds + 's '}`
 }
 
 exports.diffDays = (date1, date2) => {
