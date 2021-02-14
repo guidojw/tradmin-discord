@@ -267,7 +267,7 @@ module.exports = class Bot {
 
   async send (user, content) {
     try {
-      await user.send(content)
+      return await user.send(content)
     } catch (err) {
       if (err instanceof DiscordAPIError) {
         // Most likely because the author has DMs closed,
